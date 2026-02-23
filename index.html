@@ -114,14 +114,14 @@ function subtleVibrate() {
 
 /* ---------- DROPDOWN LOGIC ---------- */
 const optionsData = {
-income: ["Income"],
-home: ["Electricity","Internet","Mortgage","Water"],
-living: ["Dining Out","Groceries","Gym"],
-pets: ["Dog Food","Dog Vet"],
-"tithings/donations": ["Donation","Tithes"],
-transportation: ["Gas","Insurance","Uber"],
-investments: ["IRA","Savings"],
-travel: ["Flight","Hotel"]
+    income: ["Income"],
+    home: ["Electricity", "Entertainment/Gifts", "Gasoline", "HOA", "Internet", "Maintenance", "Miscellaneous Home", "Mortgage/Tax", "Trash Pickup", "Water/Sewer"],
+    living: ["Dining Out", "Entertainment/Gifts", "Groceries", "Gym/Fitness", "Medical/Prescriptions/Vitamins", "Miscellaneous Living"],
+    pets: ["Bird Food", "Bird Other", "Bird Supplies", "Bird Toys", "Bird Vet/Medical", "Dog Food", "Dog Other", "Dog Supplies", "Dog Toys", "Dog Vet/Medical"],
+    "tithings/donations": ["Donation", "Tithes"],
+    transportation: ["Car Gasoline", "Car Maintenance/Repair", "Insurance/Registration", "Miscellaneous Transportation", "Uber/RideShare"],
+    investments: ["IRA", "Savings"],
+    travel: ["Activities/Entertainment", "Car Rental", "Flight", "Hotel/Accomodations", "Miscellaneous Travel"]
 };
 
 const categorySelect = document.getElementById("category");
@@ -222,7 +222,7 @@ form.style.display = "block";
 });
 
 /* ---------- CONFIRM ---------- */
-const SCRIPT_URL = "YOUR_GOOGLE_SCRIPT_URL_HERE";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxllVaFpEuNGkqXGQWuRm_MJQfHdvyuDnNrKp3_na4XChrs1IsX80VWDKr2tai8XVYf/exec";
 
 confirmBtn.addEventListener("click", () => {
 fetch(SCRIPT_URL,{
@@ -255,4 +255,5 @@ navigator.serviceWorker.register("service-worker.js");
 
 </body>
 </html>
+
 
