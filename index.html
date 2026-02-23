@@ -146,22 +146,6 @@ itemSelect.disabled = false;
 typeSelect.disabled = false;
 typeSelect.value = "";
 
-
-if (selectedCategory === "investments") {
-const incomeOption = document.createElement("option");
-incomeOption.value = "investments";
-incomeOption.textContent = "Investment";
-itemSelect.appendChild(incomeOption);
-itemSelect.value = "investment";
-typeSelect.value = "investment";
-itemSelect.disabled = true;
-typeSelect.disabled = true;
-} else {
-itemSelect.disabled = false;
-typeSelect.disabled = false;
-typeSelect.value = "";
-  
-
 if (selectedCategory && optionsData[selectedCategory]) {
 const defaultOption = document.createElement("option");
 defaultOption.value = "";
@@ -238,7 +222,7 @@ form.style.display = "block";
 });
 
 /* ---------- CONFIRM ---------- */
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxQWn6jHNZ2a2eAYILYdncwPdfO_fm_JiFhiCb1KtqnzIpo-ECmRap_tMuG445W1xdj/exec";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxllVaFpEuNGkqXGQWuRm_MJQfHdvyuDnNrKp3_na4XChrs1IsX80VWDKr2tai8XVYf/exec";
 
 confirmBtn.addEventListener("click", () => {
 fetch(SCRIPT_URL,{
@@ -271,10 +255,4 @@ navigator.serviceWorker.register("service-worker.js");
 
 </body>
 </html>
-
-
-
-
-
-
 
