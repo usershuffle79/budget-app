@@ -1,482 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 
+<title>Lauren Budget</title>
 
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#ffffff">
 
-/*********************************************************
-	General Rules
-*********************************************************/
+<link rel="stylesheet" href="style.css">
+</head>
 
+<body>
 
-:root {				/* Pseudo-class (:) */
-  --bg-main: #F5F2EE;
-  --text-primary: #1F3A3A; 
+<main>
 
-  --brand-primary: #0E6F6B;
-  --brand-deep: #0A4F52;
+<h1>Budget Form</h1>
 
-  --accent-mint: #4EC1B1;
-  --accent-gold: #F2B84B;
-  --accent-moss: #8FAF7B;
-}
+<form id="budgetform">
 
-body {
-  background-color: var(--bg-main);
-  font-family: "Fraunces";
-  font-style: normal;
-  font-weight: <weight>;
-  nheight: 100vh; 
-}
+<label>Category</label>
+<select id="category" name="category" required>
+<option value="">-- Select Category --</option>
+<option value="income">Income</option>
+<option value="home">Home</option>
+<option value="living">Living</option>
+<option value="pets">Pets</option>
+<option value="tithings/donations">Tithing/Donations</option>
+<option value="transportation">Transportation</option>
+<option value="investments">Investments</option>
+<option value="travel">Travel</option>
+</select>
 
+<br><br>
 
-/***	Divider Line ***/
+<label>Item</label>
+<select id="item" name="item" required>
+<option value="">-- Select a category first --</option>
+</select>
 
-hr.ftr {
-  display: block;
-  height: 1px;
-  border: 0;
-  border-top: 1px solid #ccc;
-  margin: auto;
-  padding: 0;
-  border-color: var(--accent-teal);
-}
-
-/***  Footer ***/
-
-footer {
-  font-size: 12px;
-  color: rgba(86, 78, 99, 0.82);
-  text-align: center;
-  padding: 12px;
-  font-family: "Montserrat", sans-serif;
-  line-height: 20px;
-}
-
+<br><br>
 
-/*********************************************************
-	LINKS and NAVIGATION
-*********************************************************/
+<label>Note</label>
+<textarea id="notes" name="notes" rows="1" placeholder="Type your notes..."></textarea>
 
-/* Unvisited link color (before click) */
-a:link {
-  color: var(--brand-deep); 		
-  background-color: transparent;
-  text-decoration: none; 		/* Removes the default underline */
-}
-
-
-/* Visited link color (after click) */
-a:visited {
-  color: var(--accent-mint);  	
-  background-color: transparent;
-  text-decoration: none;
-}
-
-
-/* Navigation Links */ 		
-header a {				/* a-tags that are descendants of the header tag */
-  color: var(--accent-mint);
-  margin-left: 1rem;
-  text-decoration: none;
-  border-bottom: 3px solid transparent;
-}
-
-
-/* Navigation Hover Feature -- adds line under navigation words */
-header a:hover {
-border-bottom: 3px solid var(--accent-gold);
-}
-
-
-/*********************************************************
-	LOGO
-*********************************************************/
-
-/* Logo Style */ 				/* img-tags that are descendants of the class "logo" */
-.logo img {			
-  opacity: 1; 					/* Initial opacity (fully opaque) */
-  transition: opacity 0.3s ease-in-out;
-  display: block;
-  margin: 0 auto;
-  height: 300px; 				/*Adjust the size of logo*/
-}
-
+<br><br>
 
-/* Logo Hover/Fade */ 		
-.logo img:hover {			
-  opacity: 0.40; 
-  cursor: pointer;					
-}
-
-
-/*********************************************************
-	General Headers/Paragraphs
-*********************************************************/
-
-
-/* Headers */
-h1 {
-  background: var(--bg-main);
-  color: var(--accent-mint);
-  text-align: center;
-  padding: 0.5rem ;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-
-  margin-top: 1;
-  margin-left: 0;
-  margin-right:0;
-  margin-bottom: 0;
-}
-
-
-h2 {
-  background: var(--bg-main);
-  color: var(--accent-gold);
-  text-align: left;
-  padding: 0.25rem ;
-  margin-top: 1;
-  margin-left: 0;
-  margin-right:0;
-  margin-bottom: 0;
-}
-
-
-/* General Paragraphs */
-p {
-  color: var(--text-primary);
-  justify-content: space-between;
-  padding: 0.75rem ;
-  margin: 0;
-}
-
-
-/*********************************************************
-	Standard Asides
-*********************************************************/
-
-/* Aside throughout Website */
-aside {
-  width: 30%;
-  padding-left: 15px;
-  margin-left: 15px;
-  margin-right: 20px;
-  margin-bottom: 20px;
-  float: right;
-  font-style: italic;
-  color: var(--accent-mint);
-  background-color: var(--bg-main);
-}
-
-
-/* Anchor/Jump Links in Asides */
-a.aside {
-  color: white;
-  font-style: normal;
-}
-
-
-/* Bulleted-Lists */
-ul {
-  color: var(--text-primary);
-  margin: 0;
-}
-
-
-/*********************************************************
-	Info Page: Paragraph Spans, Asides, etc..
-*********************************************************/
-
-p.half {
-  color: var(--text-primary);
-  justify-content: space-between;
-  padding: 0.75rem ;
-  width: 50%; 				/* Sets Info PAge to Take up 50% of window*/
-  text-align: justify;
-  text-justify: inter-word;
-}
-
-aside.info {
-  width: 40%;
-  height: 450px;
-  padding-left: 15px;
-  margin-left: 15px;
-  margin-right: 30px;
-  margin-bottom: 15px;
-
-  position: sticky;
-  top: 1rem; /* or 0 */
-
-  color: var(--accent-mint);
-  background-color: var(--bg-main);
-}
-
-
-/*** Image styling for Aside ***/
-
-img.info {
-  border-radius: 15px;
-  max-width: 100%;
-  height: auto;
-  display: block;
-  margin: 0 auto;
-}
-
-
-/*********************************************************
-	Travel Page: Articles, Video, Carosels
-*********************************************************/
-
-article.travel {
-  background: var(--bg-main);
-  color: var(--accent-gold);
-
-  text-align: left;
-  padding: 0.25rem ;
-  margin-top: 0;
-  margin-left: 0;
-  margin-right:0;
-  margin-bottom: 0;
-}
-
-
-/* Change size of first letter of Destination/location */
-article.travel::first-letter {
-  font-size: 32px;
-}
-
-
-Div.video {
-  position: relative;
-  max-width: 500px;
-  max-height 500px;
-  margin: 2.5rem auto;
-  overflow: hidden;
-
-  background-color: var(--bg-main);
-  border-radius: 14px;
-  box-shadow: 0 10px 30px rgba(10, 79, 82, 0.12);
-}
-
-/* Center place-holder for text */
-#spholder {
-  text-align: center;
-}
-
-
-/***** Carosel for Travel Pics *****/
-
-.carousel {
-  position: relative;
-  max-width: 500px;
-  max-height: 500px;
-  margin: 2.5rem auto;
-  overflow: hidden;
-
-  background-color: var(--bg-main);
-  border-radius: 14px;
-  box-shadow: 0 10px 30px rgba(10, 79, 82, 0.12);
-}
-
-/* Track */
-.carousel-track {
-  display: flex;
-  transition: transform 0.8s cubic-bezier(0.4, 0.0, 0.2, 1);
-}
-
-/* Images */
-.carousel img {
-  width: 100%;
-  flex-shrink: 0;
-  object-fit: cover;
-  border-radius: 14px;
-}
-
-/* Navigation buttons */
-.carousel-btn {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-
-  background-color: rgba(10, 79, 82, 0.55);
-  color: var(--accent-mint);
-
-  border: none;
-  font-family: "Fraunces", serif;
-  font-size: 2rem;
-  line-height: 1;
-
-  padding: 0.35rem 0.9rem;
-  cursor: pointer;
-  border-radius: 999px;
-
-  transition:
-    background-color 0.3s ease,
-    color 0.3s ease,
-    transform 0.2s ease;
-}
-
-.carousel-btn.prev { left: 14px; }
-.carousel-btn.next { right: 14px; }
-
-/* Hover & intent */
-.carousel-btn:hover {
-  background-color: var(--brand-deep);
-  color: var(--accent-gold);
-  transform: translateY(-50%) scale(1.06);
-}
-
-/* Keyboard accessibility */
-.carousel-btn:focus-visible {
-  outline: 2px solid var(--accent-mint);
-  outline-offset: 3px;
-}
-
-/* Soft-Motion Tweak */
-.carousel-track {
-  transition: transform 0.9s cubic-bezier(0.4, 0.0, 0.2, 1);
-}
-
-
-/* Reduced-Motion Support */
-@media (prefers-reduced-motion: reduce) {
-  .carousel-track {
-    transition: none;
+<label>Date</label>
+<input type="date" id="date" name="date">
+
+<br><br>
+
+<label>Amount</label>
+<input id="amount" name="amount" type="text" inputmode="numeric" placeholder="0.00" />
+
+<br><br>
+
+<label>Type</label>
+<select id="Type" name="Type" required>
+<option value="">-- Select Type --</option>
+<option value="bill">Bill</option>
+<option value="subscription">Subscription</option>
+<option value="other">Other</option>
+<option value="income">Income</option>
+</select>
+
+<br><br>
+
+<button type="submit">Preview</button>
+
+</form>
+
+<!-- RECEIPT PREVIEW -->
+<div id="previewContainer" style="display:none; margin-top:30px;">
+  <div class="receipt-card">
+    <div class="receipt-header">
+      <h2>Transaction Preview</h2>
+      <div class="receipt-date" id="receiptDate"></div>
+    </div>
+
+    <div class="receipt-body" id="previewContent"></div>
+
+    <div class="receipt-total">
+      <span>Total</span>
+      <span id="receiptAmount"></span>
+    </div>
+
+    <div class="receipt-actions">
+      <button id="editBtn" class="secondary">Edit</button>
+      <button id="confirmBtn" class="primary">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<div id="successMessage" style="display:none; margin-top:30px;">
+  <div class="receipt-success">
+    ✔ Saved Successfully
+  </div>
+</div>
+
+</main>
+
+<script>
+
+/* ---------- HAPTIC ---------- */
+function subtleVibrate() {
+  if (navigator.vibrate) {
+    navigator.vibrate(20);
   }
 }
 
+/* ---------- DROPDOWN LOGIC ---------- */
+const optionsData = {
+income: ["Income"],
+home: ["Electricity","Internet","Mortgage","Water"],
+living: ["Dining Out","Groceries","Gym"],
+pets: ["Dog Food","Dog Vet"],
+"tithings/donations": ["Donation","Tithes"],
+transportation: ["Gas","Insurance","Uber"],
+investments: ["IRA","Savings"],
+travel: ["Flight","Hotel"]
+};
 
-/*********************************************************
-	Journal Page: Paragraphs, Asides, and Sections
-*********************************************************/
+const categorySelect = document.getElementById("category");
+const itemSelect = document.getElementById("item");
+const typeSelect = document.getElementById("Type");
 
-p.journal {
-  background: var(--bg-main);
-  color: var(--text-primary );
-  text-align: left;
-  line-height: 1.25;
-  padding: 0.25rem ;
-  justify-content: space-between;
-  width: 60%; 					/* Span 60% of window */
-  margin-top: 0;
-  margin-left: 0;
-  margin-right:0;
-  margin-bottom: 0;
+categorySelect.addEventListener("change", function () {
+const selectedCategory = this.value;
+itemSelect.innerHTML = "";
+
+if (selectedCategory === "income") {
+const incomeOption = document.createElement("option");
+incomeOption.value = "income";
+incomeOption.textContent = "Income";
+itemSelect.appendChild(incomeOption);
+itemSelect.value = "income";
+typeSelect.value = "income";
+itemSelect.disabled = true;
+typeSelect.disabled = true;
+} else {
+itemSelect.disabled = false;
+typeSelect.disabled = false;
+typeSelect.value = "";
+
+if (selectedCategory && optionsData[selectedCategory]) {
+const defaultOption = document.createElement("option");
+defaultOption.value = "";
+defaultOption.textContent = "-- Select --";
+itemSelect.appendChild(defaultOption);
+
+optionsData[selectedCategory].forEach(item => {
+const option = document.createElement("option");
+option.value = item.toLowerCase().replace(/\s+/g, "-");
+option.textContent = item;
+itemSelect.appendChild(option);
+});
+}
+}
+});
+
+/* ---------- AUTO DATE ---------- */
+document.getElementById('date').value =
+new Date().toISOString().split('T')[0];
+
+/* ---------- AMOUNT FORMAT ---------- */
+const input = document.getElementById("amount");
+input.addEventListener("input", () => {
+let digits = input.value.replace(/\D/g, "");
+if (!digits) return input.value = "";
+input.value = (parseInt(digits,10)/100).toFixed(2);
+});
+
+/* ---------- RECEIPT PREVIEW ---------- */
+const form = document.getElementById("budgetform");
+const previewContainer = document.getElementById("previewContainer");
+const previewContent = document.getElementById("previewContent");
+const editBtn = document.getElementById("editBtn");
+const confirmBtn = document.getElementById("confirmBtn");
+const successMessage = document.getElementById("successMessage");
+
+let pendingFormData = null;
+
+form.addEventListener("submit", e => {
+e.preventDefault();
+
+const formData = new FormData(form);
+
+if (categorySelect.value === "income") {
+formData.set("item","income");
+formData.set("Type","income");
 }
 
-section.journal {
-  background: var(--bg-main);
-  color: var(--accent-gold);
-  text-align: left;
-  padding: 0.25rem ;
-  margin-top: 0;
-  margin-left: 0;
-  margin-right:0;
-  margin-bottom: 0;
+pendingFormData = formData;
+
+document.getElementById("receiptDate").textContent =
+formData.get("date");
+
+document.getElementById("receiptAmount").textContent =
+"$" + formData.get("amount");
+
+previewContent.innerHTML = `
+<div><span>Category</span><span>${formData.get("category")}</span></div>
+<div><span>Item</span><span>${formData.get("item")}</span></div>
+<div><span>Type</span><span>${formData.get("Type")}</span></div>
+<div><span>Note</span><span>${formData.get("notes") || "-"}</span></div>
+`;
+
+form.style.display = "none";
+previewContainer.style.display = "block";
+
+subtleVibrate();
+});
+
+/* ---------- EDIT ---------- */
+editBtn.addEventListener("click", () => {
+previewContainer.style.display = "none";
+form.style.display = "block";
+});
+
+/* ---------- CONFIRM ---------- */
+const SCRIPT_URL = "YOUR_GOOGLE_SCRIPT_URL_HERE";
+
+confirmBtn.addEventListener("click", () => {
+fetch(SCRIPT_URL,{
+method:"POST",
+body:pendingFormData
+})
+.then(()=>{
+previewContainer.style.display = "none";
+successMessage.style.display = "block";
+
+subtleVibrate();
+
+setTimeout(()=>{
+successMessage.style.display = "none";
+form.reset();
+document.getElementById('date').value =
+new Date().toISOString().split('T')[0];
+form.style.display = "block";
+},1500);
+})
+.catch(err=>alert("Error: "+err.message));
+});
+
+/* ---------- SERVICE WORKER ---------- */
+if ("serviceWorker" in navigator) {
+navigator.serviceWorker.register("service-worker.js");
 }
 
-/* Aside for Journal */
+</script>
 
-aside.journal {
-  width: 20%;
-  height: 75vh;
-  padding-left: 15px;
-  margin-left: 15px;
-  margin-right: 15px;
-
-  position: sticky;
-  top: 1rem; /* or 0 */
-  background-color: rgba(143, 175, 123, 0.6);
-  border-radius: 12px;
-}
-
-
-
-/* Text for Asides in Journal */
-
-p.aside {
-  font-style: italic;
-  font-size: 18px;
-  color: var(--text-primary);
-  justify-content: space-between;
-
-  height:75px;
-  margin: 0px;
-  padding: 10px;
-
-  display: table-cell;
-  vertical-align: middle;
-  text-align: center;
-}
-
-
-/* Horizonal Rule for Journal */
-
-hr.journal {
-  width: 30%;      /* Sets the width to 30% of its containing block (usually the window/body) */
-  margin: 0 auto;  /* Sets top/bottom margins to 0 and left/right margins to 'auto', which centers the block horizontally */
-  height: 3px;
-  border: 0;
-  border-top: 3px dotted var(--brand-primary);
-}
-
-
-/*********************************************************
-	Unauthorized Popup for Budget Form
-*********************************************************/
-
-
-.modal {
-  display: block; 			/* Display by default when this page is served */
-  position: fixed; 			/* Stay in place */
-  z-index: 1; 				/* Sit on top */
-  left: 0;
-  top: 0;
-  width: 100%; 				/* Full width */
-  height: 100%; 			/* Full height */
-  background-color: rgb(0,0,0); 	/* Fallback color */
-  background-color: rgba(0,0,0,0.4); 	/* Black w/ opacity */
-}
-
-.modal-content {
-  background-color: #fefefe;
-  margin: 15% auto; 			/* 15% from the top and centered */
-  padding: 20px;
-  border: 1px solid #888;
-  width: 80%; 				/* Could be more or less, depending on screen size */
-}
-
-.close {
-  color: #aaa;
-  float: right;
-  font-size: 28px;
-  font-weight: bold;
-}
-
-.close:hover,
-.close:focus {
-  color: black;
-  text-decoration: underline;
-  cursor: pointer;
-}
-
-
-.birdie {
-  color: red;
-}
-
-
-
-/* "Return Home" -- adds line under link when hovered over */
-.popup {
-  color: var(--accent-mint);
-  margin-left: 1rem;
-  text-decoration: none;
-  border-bottom: 3px solid transparent;
-}
-
-/* When hovered over */
-.popup:hover {
-border-bottom: 3px solid var(--accent-gold);
-}
-
-
+</body>
+</html>
