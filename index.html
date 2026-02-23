@@ -146,6 +146,22 @@ itemSelect.disabled = false;
 typeSelect.disabled = false;
 typeSelect.value = "";
 
+
+if (selectedCategory === "investments") {
+const incomeOption = document.createElement("option");
+incomeOption.value = "investments";
+incomeOption.textContent = "Investment";
+itemSelect.appendChild(incomeOption);
+itemSelect.value = "investments";
+typeSelect.value = "investments";
+itemSelect.disabled = true;
+typeSelect.disabled = true;
+} else {
+itemSelect.disabled = false;
+typeSelect.disabled = false;
+typeSelect.value = "";
+  
+
 if (selectedCategory && optionsData[selectedCategory]) {
 const defaultOption = document.createElement("option");
 defaultOption.value = "";
@@ -255,6 +271,7 @@ navigator.serviceWorker.register("service-worker.js");
 
 </body>
 </html>
+
 
 
 
