@@ -175,7 +175,7 @@ input.addEventListener("input", () => {
   input.value = (parseInt(digits,10)/100).toFixed(2);
 });
 
-/* ---------- AUTO-CATEGORIZE TYPE (simplified) ---------- */
+/* ---------- AUTO-CATEGORIZE TYPE (flexible) ---------- */
 const autoTypeMap = [
   // Bills (Category + Item specific)
   { category: "home", item: "electricity", type: "bill" },
@@ -188,6 +188,18 @@ const autoTypeMap = [
   { category: "transportation", item: "insurance/registration", type: "bill" }
 ];
 
+// Keywords that indicate a subscription
+const subscriptionKeywords = [
+  "sub",
+  "subscription",
+  "membership",
+  "member",
+  "prime",
+  "netflix",
+  "apple",
+  "pandora"
+];
+
 function autoCategorizeType() {
   const categoryVal = categorySelect.value.toLowerCase();
   const itemVal = itemSelect.value.toLowerCase();
@@ -195,7 +207,7 @@ function autoCategorizeType() {
 
   let matched = false;
 
-  // First, check explicit bill mappings
+  // Check explicit bill mappings first
   autoTypeMap.forEach(rule => {
     if (rule.category === categoryVal && rule.item === itemVal) {
       typeSelect.value = rule.type;
@@ -203,10 +215,15 @@ function autoCategorizeType() {
     }
   });
 
-  // Then, check for subscription keywords in notes
-  if (!matched && (notesVal.includes("subscription") || notesVal.includes("membership"))) {
-    typeSelect.value = "subscription";
-    matched = true;
+  // Then check for subscription keywords in notes
+  if (!matched) {
+    for (let keyword of subscriptionKeywords) {
+      if (notesVal.includes(keyword)) {
+        typeSelect.value = "subscription";
+        matched = true;
+        break;
+      }
+    }
   }
 
   // Clear type if nothing matched and it's not income/investment
@@ -215,6 +232,7 @@ function autoCategorizeType() {
   }
 }
 
+// Event listeners
 itemSelect.addEventListener("change", autoCategorizeType);
 document.getElementById("notes").addEventListener("input", autoCategorizeType);
 categorySelect.addEventListener("change", autoCategorizeType);
@@ -300,3 +318,4 @@ if ("serviceWorker" in navigator) {
 
 </body>
 </html>
+
