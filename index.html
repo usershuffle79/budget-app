@@ -129,37 +129,38 @@ const itemSelect = document.getElementById("item");
 const typeSelect = document.getElementById("Type");
 
 categorySelect.addEventListener("change", function () {
-const selectedCategory = this.value;
-itemSelect.innerHTML = "";
+  const selectedCategory = this.value;
+  itemSelect.innerHTML = "";
 
-if (selectedCategory === "income") {
-const incomeOption = document.createElement("option");
-incomeOption.value = "income";
-incomeOption.textContent = "Income";
-itemSelect.appendChild(incomeOption);
-itemSelect.value = "income";
-typeSelect.value = "income";
-itemSelect.disabled = true;
-typeSelect.disabled = true;
-} else {
-itemSelect.disabled = false;
-typeSelect.disabled = false;
-typeSelect.value = "";
+  if (selectedCategory === "income") {
+    const incomeOption = document.createElement("option");
+    incomeOption.value = "income";
+    incomeOption.textContent = "Income";
+    itemSelect.appendChild(incomeOption);
+    itemSelect.value = "income";
+    typeSelect.value = "income";
+    itemSelect.disabled = true;
+    typeSelect.disabled = true;
+  } else {
+    itemSelect.disabled = false;
+    typeSelect.disabled = false;
+    typeSelect.value = "";
 
-if (selectedCategory && optionsData[selectedCategory]) {
-const defaultOption = document.createElement("option");
-defaultOption.value = "";
-defaultOption.textContent = "-- Select --";
-itemSelect.appendChild(defaultOption);
+    if (selectedCategory && optionsData[selectedCategory]) {
+      const defaultOption = document.createElement("option");
+      defaultOption.value = "";
+      defaultOption.textContent = "-- Select --";
+      itemSelect.appendChild(defaultOption);
 
-optionsData[selectedCategory].forEach(item => {
-const option = document.createElement("option");
-option.value = item.toLowerCase().replace(/\s+/g, "-");
-option.textContent = item;
-itemSelect.appendChild(option);
-});
-}
-}
+      optionsData[selectedCategory].forEach(item => {
+        const option = document.createElement("option");
+        option.value = item.toLowerCase().replace(/\s+/g, "-");
+        option.textContent = item;
+        itemSelect.appendChild(option);
+      });
+    }
+  }
+  autoCategorizeType();
 });
 
 /* ---------- AUTO DATE ---------- */
@@ -169,10 +170,53 @@ new Date().toISOString().split('T')[0];
 /* ---------- AMOUNT FORMAT ---------- */
 const input = document.getElementById("amount");
 input.addEventListener("input", () => {
-let digits = input.value.replace(/\D/g, "");
-if (!digits) return input.value = "";
-input.value = (parseInt(digits,10)/100).toFixed(2);
+  let digits = input.value.replace(/\D/g, "");
+  if (!digits) return input.value = "";
+  input.value = (parseInt(digits,10)/100).toFixed(2);
 });
+
+/* ---------- AUTO-CATEGORIZE TYPE ---------- */
+const autoTypeMap = [
+  // Bills
+  { category: "home", item: "electricity", noteIncludes: ["electricity bill"], type: "bill" },
+  { category: "home", item: "gasoline", noteIncludes: ["gas bill"], type: "bill" },
+  { category: "home", item: "hoa", noteIncludes: ["hoa fee"], type: "bill" },
+  { category: "home", item: "internet", noteIncludes: ["internet bill"], type: "bill" },
+  { category: "home", item: "mortgage/tax", noteIncludes: ["mortgage"], type: "bill" },
+  { category: "home", item: "trash pickup", noteIncludes: ["trash bill"], type: "bill" },
+  { category: "home", item: "water/sewer", noteIncludes: ["water bill","sewer bill"], type: "bill" },
+  { category: "transportation", item: "insurance/registration", noteIncludes: [], type: "bill" },
+
+  // Subscriptions
+  { category: "living", item: "entertainment/gifts", noteIncludes: ["amazon - prime subscription","amazon kindle unlimited subscription","amazon purchase - paramount plus","apple storage","netflix subscription","pandora subscription"], type: "subscription" },
+  { category: "living", item: "gym/fitness", noteIncludes: ["planet fitness subscription","planet fitness subscription (annual)"], type: "subscription" },
+  { category: "living", item: "miscellaneous-living", noteIncludes: ["aaa membership (annual)","costco membership (annual)","ring membership (annual)"], type: "subscription" }
+];
+
+function autoCategorizeType() {
+  const categoryVal = categorySelect.value.toLowerCase();
+  const itemVal = itemSelect.value.toLowerCase();
+  const notesVal = document.getElementById("notes").value.toLowerCase();
+
+  let matched = false;
+
+  autoTypeMap.forEach(rule => {
+    if (rule.category === categoryVal && rule.item === itemVal) {
+      if (rule.noteIncludes.length === 0 || rule.noteIncludes.some(note => notesVal.includes(note.toLowerCase()))) {
+        typeSelect.value = rule.type;
+        matched = true;
+      }
+    }
+  });
+
+  // If no match, clear Type (unless it's auto-set for income/investment)
+  if (!matched && typeSelect.value !== "income" && typeSelect.value !== "investment") {
+    typeSelect.value = "";
+  }
+}
+
+itemSelect.addEventListener("change", autoCategorizeType);
+document.getElementById("notes").addEventListener("input", autoCategorizeType);
 
 /* ---------- RECEIPT PREVIEW ---------- */
 const form = document.getElementById("budgetform");
@@ -185,80 +229,73 @@ const successMessage = document.getElementById("successMessage");
 let pendingFormData = null;
 
 form.addEventListener("submit", e => {
-e.preventDefault();
+  e.preventDefault();
 
-const formData = new FormData(form);
+  const formData = new FormData(form);
 
-if (categorySelect.value === "income") {
-formData.set("item","income");
-formData.set("Type","income");
-}
+  if (categorySelect.value === "income") {
+    formData.set("item","income");
+    formData.set("Type","income");
+  }
 
-pendingFormData = formData;
+  pendingFormData = formData;
 
-document.getElementById("receiptDate").textContent =
-formData.get("date");
+  document.getElementById("receiptDate").textContent =
+  formData.get("date");
 
-document.getElementById("receiptAmount").textContent =
-"$" + formData.get("amount");
+  document.getElementById("receiptAmount").textContent =
+  "$" + formData.get("amount");
 
-previewContent.innerHTML = `
-<div><span>Category</span><span>${formData.get("category")}</span></div>
-<div><span>Item</span><span>${formData.get("item")}</span></div>
-<div><span>Type</span><span>${formData.get("Type")}</span></div>
-<div><span>Note</span><span>${formData.get("notes") || "-"}</span></div>
-`;
+  previewContent.innerHTML = `
+  <div><span>Category</span><span>${formData.get("category")}</span></div>
+  <div><span>Item</span><span>${formData.get("item")}</span></div>
+  <div><span>Type</span><span>${formData.get("Type")}</span></div>
+  <div><span>Note</span><span>${formData.get("notes") || "-"}</span></div>
+  `;
 
-form.style.display = "none";
-previewContainer.style.display = "block";
+  form.style.display = "none";
+  previewContainer.style.display = "block";
 
-subtleVibrate();
+  subtleVibrate();
 });
 
 /* ---------- EDIT ---------- */
 editBtn.addEventListener("click", () => {
-previewContainer.style.display = "none";
-form.style.display = "block";
+  previewContainer.style.display = "none";
+  form.style.display = "block";
 });
 
 /* ---------- CONFIRM ---------- */
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzhkJOpfMbyIYsGy5KI5h0--3jyKFF1cEtYLqNMGwnUiK3kLwIx31gmGkPT0Kxzo27q/exec";
 
 confirmBtn.addEventListener("click", () => {
-fetch(SCRIPT_URL,{
-method:"POST",
-body:pendingFormData
-})
-.then(()=>{
-previewContainer.style.display = "none";
-successMessage.style.display = "block";
+  fetch(SCRIPT_URL,{
+    method:"POST",
+    body:pendingFormData
+  })
+  .then(()=>{
+    previewContainer.style.display = "none";
+    successMessage.style.display = "block";
 
-subtleVibrate();
+    subtleVibrate();
 
-setTimeout(()=>{
-successMessage.style.display = "none";
-form.reset();
-document.getElementById('date').value =
-new Date().toISOString().split('T')[0];
-form.style.display = "block";
-},1500);
-})
-.catch(err=>alert("Error: "+err.message));
+    setTimeout(()=>{
+      successMessage.style.display = "none";
+      form.reset();
+      document.getElementById('date').value =
+      new Date().toISOString().split('T')[0];
+      form.style.display = "block";
+    },1500);
+  })
+  .catch(err=>alert("Error: "+err.message));
 });
 
 /* ---------- SERVICE WORKER ---------- */
 if ("serviceWorker" in navigator) {
-navigator.serviceWorker.register("service-worker.js");
+  navigator.serviceWorker.register("service-worker.js");
 }
 
 </script>
 
 </body>
 </html>
-
-
-
-
-
-
-
