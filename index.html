@@ -175,22 +175,17 @@ input.addEventListener("input", () => {
   input.value = (parseInt(digits,10)/100).toFixed(2);
 });
 
-/* ---------- AUTO-CATEGORIZE TYPE ---------- */
+/* ---------- AUTO-CATEGORIZE TYPE (simplified) ---------- */
 const autoTypeMap = [
-  // Bills
-  { category: "home", item: "electricity", noteIncludes: ["electricity bill"], type: "bill" },
-  { category: "home", item: "gasoline", noteIncludes: ["gas bill"], type: "bill" },
-  { category: "home", item: "hoa", noteIncludes: ["hoa fee"], type: "bill" },
-  { category: "home", item: "internet", noteIncludes: ["internet bill"], type: "bill" },
-  { category: "home", item: "mortgage/tax", noteIncludes: ["mortgage"], type: "bill" },
-  { category: "home", item: "trash pickup", noteIncludes: ["trash bill"], type: "bill" },
-  { category: "home", item: "water/sewer", noteIncludes: ["water bill","sewer bill"], type: "bill" },
-  { category: "transportation", item: "insurance/registration", noteIncludes: [], type: "bill" },
-
-  // Subscriptions
-  { category: "living", item: "entertainment/gifts", noteIncludes: ["amazon - prime subscription","amazon kindle unlimited subscription","amazon purchase - paramount plus","apple storage","netflix subscription","pandora subscription"], type: "subscription" },
-  { category: "living", item: "gym/fitness", noteIncludes: ["planet fitness subscription","planet fitness subscription (annual)"], type: "subscription" },
-  { category: "living", item: "miscellaneous-living", noteIncludes: ["aaa membership (annual)","costco membership (annual)","ring membership (annual)"], type: "subscription" }
+  // Bills (Category + Item specific)
+  { category: "home", item: "electricity", type: "bill" },
+  { category: "home", item: "gasoline", type: "bill" },
+  { category: "home", item: "hoa", type: "bill" },
+  { category: "home", item: "internet", type: "bill" },
+  { category: "home", item: "mortgage/tax", type: "bill" },
+  { category: "home", item: "trash pickup", type: "bill" },
+  { category: "home", item: "water/sewer", type: "bill" },
+  { category: "transportation", item: "insurance/registration", type: "bill" }
 ];
 
 function autoCategorizeType() {
@@ -200,16 +195,21 @@ function autoCategorizeType() {
 
   let matched = false;
 
+  // First, check explicit bill mappings
   autoTypeMap.forEach(rule => {
     if (rule.category === categoryVal && rule.item === itemVal) {
-      if (rule.noteIncludes.length === 0 || rule.noteIncludes.some(note => notesVal.includes(note.toLowerCase()))) {
-        typeSelect.value = rule.type;
-        matched = true;
-      }
+      typeSelect.value = rule.type;
+      matched = true;
     }
   });
 
-  // If no match, clear Type (unless it's auto-set for income/investment)
+  // Then, check for subscription keywords in notes
+  if (!matched && (notesVal.includes("subscription") || notesVal.includes("membership"))) {
+    typeSelect.value = "subscription";
+    matched = true;
+  }
+
+  // Clear type if nothing matched and it's not income/investment
   if (!matched && typeSelect.value !== "income" && typeSelect.value !== "investment") {
     typeSelect.value = "";
   }
@@ -217,6 +217,7 @@ function autoCategorizeType() {
 
 itemSelect.addEventListener("change", autoCategorizeType);
 document.getElementById("notes").addEventListener("input", autoCategorizeType);
+categorySelect.addEventListener("change", autoCategorizeType);
 
 /* ---------- RECEIPT PREVIEW ---------- */
 const form = document.getElementById("budgetform");
