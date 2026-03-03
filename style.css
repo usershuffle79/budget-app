@@ -27,6 +27,15 @@ button {
   border: none;
 }
 
+/* Logo Style */ 				/* img-tags that are descendants of the class "logo" */
+.logo img {			
+  opacity: 1; 					/* Initial opacity (fully opaque) */
+  transition: opacity 0.3s ease-in-out;
+  display: block;
+  margin: 0 auto;
+  height: 300px; 				/*Adjust the size of logo*/
+}
+
 /* ---------- RECEIPT ---------- */
 
 .receipt-card {
@@ -95,3 +104,4 @@ button.secondary {
   from { opacity: 0; transform: translateY(8px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
