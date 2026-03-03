@@ -27,13 +27,17 @@ button {
   border: none;
 }
 
-/* Logo Style */ 				/* img-tags that are descendants of the class "logo" */
+/* Logo Style */ 				/* Also needs to center the parent/body section */
+header {
+  display: flex;
+  justify-content: center;   /* horizontal centering */
+  align-items: center;       /* vertical centering (optional) */
+}
+
 .logo img {			
-  opacity: 1; 					/* Initial opacity (fully opaque) */
+  opacity: 1;
   transition: opacity 0.3s ease-in-out;
-  display: block;
-  margin: 0 auto;
-  height: 300px; 				/*Adjust the size of logo*/
+  height: 100px;
 }
 
 /* ---------- RECEIPT ---------- */
@@ -104,4 +108,5 @@ button.secondary {
   from { opacity: 0; transform: translateY(8px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
 
