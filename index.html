@@ -78,11 +78,29 @@
 
 <br><br>
 
+<label>Need or Want</label>
+
+<div class="need-want">
+  <label>
+    <input type="radio" name="needWant" value="Need" required>
+    Need
+  </label>
+
+  <label>
+    <input type="radio" name="needWant" value="Want">
+    Want
+  </label>
+</div>
+
+<br><br>
+
 <button type="submit">Preview</button>
 
 </form>
 
+
 <!-- RECEIPT PREVIEW -->
+
 <div id="previewContainer" style="display:none; margin-top:30px;">
   <div class="receipt-card">
     <div class="receipt-header">
@@ -111,6 +129,7 @@
 </div>
 
 </main>
+
 
 <script>
 
@@ -274,12 +293,15 @@ form.addEventListener("submit", e => {
   document.getElementById("receiptAmount").textContent =
   "$" + formData.get("amount");
 
-  previewContent.innerHTML = `
+  
+previewContent.innerHTML = `
   <div><span>Category</span><span>${formData.get("category")}</span></div>
   <div><span>Item</span><span>${formData.get("item")}</span></div>
   <div><span>Type</span><span>${formData.get("Type")}</span></div>
+  <div><span>Need/Want</span><span>${formData.get("needWant")}</span></div>
   <div><span>Note</span><span>${formData.get("notes") || "-"}</span></div>
-  `;
+`;
+
 
   form.style.display = "none";
   previewContainer.style.display = "block";
