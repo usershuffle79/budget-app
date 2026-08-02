@@ -590,8 +590,26 @@ function showPreview(event) {
     return;
   }
 
-  pendingFormData = new FormData(elements.form);
-  pendingFormData.set("amount", amount.toFixed(2));
+
+/******* This bit ensures the POST request contains needed Need/Want data ************/
+
+const needWantValue = elements.need.checked
+  ? "Need"
+  : elements.want.checked
+    ? "Want"
+    : "";
+
+if (!needWantValue) {
+  alert("Please select Need or Want.");
+  return;
+}
+
+pendingFormData = new FormData(elements.form);
+
+pendingFormData.set("amount", amount.toFixed(2));
+pendingFormData.set("needWant", needWantValue);
+
+/*************************************** ************/
 
   const item = getSelectedItem();
   const previewRows = [
