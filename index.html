@@ -1,8 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
+
+<!--------------------------------------------------------
+Refactored index.html file (8/2/2026)
+Created to provide updates, revisions, and Need/Want
+--------------------------------------------------------->
+
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+
+<meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 
 <title>Shuffle Budget</title>
 
@@ -10,340 +18,737 @@
 <meta name="theme-color" content="#ffffff">
 
 <link rel="stylesheet" href="style.css">
+
 </head>
 
 <body>
 
 <header>
-	<div class="logo">
+
+    <div class="logo">
         <a href="index.html">
-	    <img src="logotransparent2.png" alt="Lauren, reimagined">
-	  </a>
-  </div>
+            <img src="logotransparent2.png"
+                 alt="Lauren, reimagined">
+        </a>
+    </div>
+
 </header>
 
-  
 <main>
 
 <h1>Budget Form</h1>
 
 <form id="budgetform">
 
-<label>Category</label>
-<select id="category" name="category" required>
+<!---------------------------------------------------
+Category
+---------------------------------------------------->
+
+<label for="category">Category</label>
+
+<select id="category"
+        name="category"
+        required>
+
 <option value="">-- Select Category --</option>
+
 <option value="income">Income</option>
 <option value="home">Home</option>
 <option value="living">Living</option>
 <option value="pets">Pets</option>
-<option value="tithings/donations">Tithing/Donations</option>
-<option value="transportation">Transportation</option>
-<option value="investments">Investments</option>
-<option value="travel">Travel</option>
+<option value="tithings/donations">
+Tithing / Donations
+</option>
+
+<option value="transportation">
+Transportation
+</option>
+
+<option value="investments">
+Investments
+</option>
+
+<option value="travel">
+Travel
+</option>
+
 </select>
 
 <br><br>
 
-<label>Item</label>
-<select id="item" name="item" required>
-<option value="">-- Select a category first --</option>
+<!---------------------------------------------------
+Item
+---------------------------------------------------->
+
+<label for="item">Item</label>
+
+<select id="item"
+        name="item"
+        required>
+
+<option value="">
+-- Select a category first --
+</option>
+
 </select>
 
 <br><br>
 
-<label>Note</label>
-<textarea id="notes" name="notes" rows="1" placeholder="Type your notes..."></textarea>
+<!---------------------------------------------------
+Notes
+---------------------------------------------------->
+
+<label for="notes">Note</label>
+
+<textarea
+id="notes"
+name="notes"
+rows="1"
+placeholder="Type your notes..."></textarea>
 
 <br><br>
 
-<label>Date</label>
-<input type="date" id="date" name="date">
+<!---------------------------------------------------
+Date
+---------------------------------------------------->
+
+<label for="date">Date</label>
+
+<input
+type="date"
+id="date"
+name="date"
+required>
 
 <br><br>
 
-<label>Amount</label>
-<input id="amount" name="amount" type="text" inputmode="numeric" placeholder="0.00" />
+<!---------------------------------------------------
+Amount
+---------------------------------------------------->
+
+<label for="amount">Amount</label>
+
+<input
+id="amount"
+name="amount"
+type="text"
+inputmode="decimal"
+placeholder="0.00"
+required>
 
 <br><br>
 
-<label>Type</label>
-<select id="Type" name="Type" required>
+<!---------------------------------------------------
+Type
+---------------------------------------------------->
+
+<label for="Type">Type</label>
+
+<select
+id="Type"
+name="Type"
+required>
+
 <option value="">-- Select Type --</option>
-<option value="bill">Bill</option>
-<option value="subscription">Subscription</option>
-<option value="other">Other</option>
-<option value="investment">Investment</option>
-<option value="income">Income</option>
+
+<option value="bill">
+Bill
+</option>
+
+<option value="subscription">
+Subscription
+</option>
+
+<option value="investment">
+Investment
+</option>
+
+<option value="income">
+Income
+</option>
+
+<option value="other">
+Other
+</option>
+
 </select>
 
 <br><br>
+
+<!---------------------------------------------------
+Need / Want
+---------------------------------------------------->
 
 <label>Need or Want</label>
 
 <div class="need-want">
-  <label>
-    <input type="radio" name="needWant" value="Need" required>
-    Need
-  </label>
 
-  <label>
-    <input type="radio" name="needWant" value="Want">
-    Want
-  </label>
+<label>
+
+<input
+type="radio"
+id="need"
+name="needWant"
+value="Need"
+required>
+
+Need
+
+</label>
+
+<label>
+
+<input
+type="radio"
+id="want"
+name="needWant"
+value="Want">
+
+Want
+
+</label>
+
 </div>
 
 <br><br>
 
-<button type="submit">Preview</button>
+<button type="submit">
+
+Preview Transaction
+
+</button>
 
 </form>
 
+<!---------------------------------------------------
+Receipt Preview
+---------------------------------------------------->
 
-<!-- RECEIPT PREVIEW -->
+<section
+id="previewContainer"
+style="display:none; margin-top:30px;">
 
-<div id="previewContainer" style="display:none; margin-top:30px;">
-  <div class="receipt-card">
-    <div class="receipt-header">
-      <h2>Transaction Preview</h2>
-      <div class="receipt-date" id="receiptDate"></div>
-    </div>
+<div class="receipt-card">
 
-    <div class="receipt-body" id="previewContent"></div>
+<div class="receipt-header">
 
-    <div class="receipt-total">
-      <span>Total</span>
-      <span id="receiptAmount"></span>
-    </div>
+<h2>Transaction Preview</h2>
 
-    <div class="receipt-actions">
-      <button id="editBtn" class="secondary">Edit</button>
-      <button id="confirmBtn" class="primary">Confirm</button>
-    </div>
-  </div>
+<div
+id="receiptDate"
+class="receipt-date">
 </div>
 
-<div id="successMessage" style="display:none; margin-top:30px;">
-  <div class="receipt-success">
-    ✔ Saved Successfully
-  </div>
 </div>
+
+<div
+id="previewContent"
+class="receipt-body">
+</div>
+
+<div class="receipt-total">
+
+<span>Total</span>
+
+<span id="receiptAmount"></span>
+
+</div>
+
+<div class="receipt-actions">
+
+<button
+id="editBtn"
+class="secondary">
+
+Edit
+
+</button>
+
+<button
+id="confirmBtn"
+class="primary">
+
+Confirm
+
+</button>
+
+</div>
+
+</div>
+
+</section>
+
+<!---------------------------------------------------
+Success Message
+---------------------------------------------------->
+
+<section
+id="successMessage"
+style="display:none; margin-top:30px;">
+
+<div class="receipt-success">
+
+✔ Saved Successfully
+
+</div>
+
+</section>
 
 </main>
 
 
+<!- -------------------------------------------------- JAVA SCRIPT --------------------------------------------------- ->
+<!- -------------------------------------------------- JAVA SCRIPT --------------------------------------------------- ->
+<!- -------------------------------------------------- JAVA SCRIPT --------------------------------------------------- ->
+
+
 <script>
 
-/* ---------- HAPTIC ---------- */
-function subtleVibrate() {
-  if (navigator.vibrate) {
-    navigator.vibrate(20);
-  }
-}
+"use strict";
 
-/* ---------- DROPDOWN LOGIC ---------- */
-const optionsData = {
-    income: ["Income"],
-    home: ["Electricity", "Gasoline", "HOA", "Internet", "Maintenance", "Miscellaneous Home", "Mortgage/Tax", "Trash Pickup", "Water/Sewer"],
-    living: ["Dining Out", "Entertainment/Gifts", "Groceries", "Gym/Fitness", "Medical/Prescriptions/Vitamins", "Miscellaneous Living"],
-    pets: ["Bird Food", "Bird Other", "Bird Supplies", "Bird Toys", "Bird Vet/Medical", "Dog Food", "Dog Other", "Dog Supplies", "Dog Toys", "Dog Vet/Medical"],
-    "tithings/donations": ["Donation", "Tithes"],
-    transportation: ["Car Gasoline", "Car Maintenance/Repair", "Insurance/Registration", "Miscellaneous Transportation", "Uber/RideShare"],
-    investments: ["IRA", "Savings"],
-    travel: ["Activities/Entertainment", "Car Rental", "Flight", "Hotel/Accomodations", "Miscellaneous Travel"]
+/******************************************************************************
+ * CONFIGURATION
+ ******************************************************************************/
+
+const SCRIPT_URL =
+  "https://script.google.com/macros/s/AKfycbzhkJOpfMbyIYsGy5KI5h0--3jyKFF1cEtYLqNMGwnUiK3kLwIx31gmGkPT0Kxzo27q/exec";
+
+const SUCCESS_DISPLAY_MS = 1500;
+
+/******************************************************************************
+ * DOM ELEMENTS
+ ******************************************************************************/
+
+const elements = {
+  form: document.getElementById("budgetform"),
+  category: document.getElementById("category"),
+  item: document.getElementById("item"),
+  notes: document.getElementById("notes"),
+  date: document.getElementById("date"),
+  amount: document.getElementById("amount"),
+  type: document.getElementById("Type"),
+  need: document.getElementById("need"),
+  want: document.getElementById("want"),
+  previewContainer: document.getElementById("previewContainer"),
+  previewContent: document.getElementById("previewContent"),
+  receiptDate: document.getElementById("receiptDate"),
+  receiptAmount: document.getElementById("receiptAmount"),
+  editButton: document.getElementById("editBtn"),
+  confirmButton: document.getElementById("confirmBtn"),
+  success: document.getElementById("successMessage")
 };
 
-const categorySelect = document.getElementById("category");
-const itemSelect = document.getElementById("item");
-const typeSelect = document.getElementById("Type");
+let pendingFormData = null;
+let isSubmitting = false;
 
-categorySelect.addEventListener("change", function () {
-  const selectedCategory = this.value;
-  itemSelect.innerHTML = "";
+/******************************************************************************
+ * MASTER DATA MODEL
+ ******************************************************************************/
 
-  if (selectedCategory === "income") {
-    const incomeOption = document.createElement("option");
-    incomeOption.value = "income";
-    incomeOption.textContent = "Income";
-    itemSelect.appendChild(incomeOption);
-    itemSelect.value = "income";
-    typeSelect.value = "income";
-    itemSelect.disabled = true;
-    typeSelect.disabled = true;
-  } else {
-    itemSelect.disabled = false;
-    typeSelect.disabled = false;
-    typeSelect.value = "";
+const CATEGORY_DATA = {
+  income: {
+    items: [
+      { label: "Income", value: "income", type: "income", needWant: "Need" }
+    ]
+  },
 
-    if (selectedCategory && optionsData[selectedCategory]) {
-      const defaultOption = document.createElement("option");
-      defaultOption.value = "";
-      defaultOption.textContent = "-- Select --";
-      itemSelect.appendChild(defaultOption);
+  home: {
+    items: [
+      { label: "Electricity", value: "electricity", type: "bill", needWant: "Need" },
+      { label: "Gasoline", value: "gasoline", type: "bill", needWant: "Need" },
+      { label: "HOA", value: "hoa", type: "bill", needWant: "Need" },
+      { label: "Internet", value: "internet", type: "bill", needWant: "Need" },
+      { label: "Maintenance", value: "maintenance", type: "other", needWant: "Need" },
+      { label: "Miscellaneous Home", value: "miscellaneous-home", type: "other", needWant: "Need" },
+      { label: "Mortgage/Tax", value: "mortgage/tax", type: "bill", needWant: "Need" },
+      { label: "Trash Pickup", value: "trash-pickup", type: "bill", needWant: "Need" },
+      { label: "Water/Sewer", value: "water/sewer", type: "bill", needWant: "Need" }
+    ]
+  },
 
-      optionsData[selectedCategory].forEach(item => {
-        const option = document.createElement("option");
-        option.value = item.toLowerCase().replace(/\s+/g, "-");
-        option.textContent = item;
-        itemSelect.appendChild(option);
-      });
-    }
+  living: {
+    items: [
+      { label: "Dining Out", value: "dining-out", type: "other", needWant: "Want" },
+      { label: "Entertainment/Gifts", value: "entertainment/gifts", type: "other", needWant: "Want" },
+      { label: "Groceries", value: "groceries", type: "other", needWant: "Need" },
+      { label: "Gym/Fitness", value: "gym/fitness", type: "other", needWant: "Need" },
+      { label: "Medical/Prescriptions/Vitamins", value: "medical/prescriptions/vitamins", type: "other", needWant: "Need" },
+      { label: "Miscellaneous Living", value: "miscellaneous-living", type: "other", needWant: "Need" }
+    ]
+  },
+
+  pets: {
+    items: [
+      { label: "Bird Food", value: "bird-food", type: "other", needWant: "Need" },
+      { label: "Bird Other", value: "bird-other", type: "other", needWant: "Want" },
+      { label: "Bird Supplies", value: "bird-supplies", type: "other", needWant: "Want" },
+      { label: "Bird Toys", value: "bird-toys", type: "other", needWant: "Want" },
+      { label: "Bird Vet/Medical", value: "bird-vet/medical", type: "other", needWant: "Need" },
+      { label: "Dog Food", value: "dog-food", type: "other", needWant: "Need" },
+      { label: "Dog Other", value: "dog-other", type: "other", needWant: "Want" },
+      { label: "Dog Supplies", value: "dog-supplies", type: "other", needWant: "Want" },
+      { label: "Dog Toys", value: "dog-toys", type: "other", needWant: "Want" },
+      { label: "Dog Vet/Medical", value: "dog-vet/medical", type: "other", needWant: "Need" }
+    ]
+  },
+
+  transportation: {
+    items: [
+      { label: "Car Gasoline", value: "car-gasoline", type: "other", needWant: "Need" },
+      { label: "Car Maintenance/Repair", value: "car-maintenance/repair", type: "other", needWant: "Need" },
+      { label: "Insurance/Registration", value: "insurance/registration", type: "bill", needWant: "Need" },
+      { label: "Miscellaneous Transportation", value: "miscellaneous-transportation", type: "other", needWant: "Need" },
+      { label: "Uber/RideShare", value: "uber/rideshare", type: "other", needWant: "Want" }
+    ]
+  },
+
+  investments: {
+    items: [
+      { label: "IRA", value: "ira", type: "investment", needWant: "Need" },
+      { label: "Savings", value: "savings", type: "investment", needWant: "Need" }
+    ]
+  },
+
+  travel: {
+    items: [
+      { label: "Activities/Entertainment", value: "activities/entertainment", type: "other", needWant: "Want" },
+      { label: "Car Rental", value: "car-rental", type: "other", needWant: "Want" },
+      { label: "Flight", value: "flight", type: "other", needWant: "Want" },
+      { label: "Hotel/Accommodations", value: "hotel/accommodations", type: "other", needWant: "Want" },
+      { label: "Miscellaneous Travel", value: "miscellaneous-travel", type: "other", needWant: "Want" }
+    ]
+  },
+
+  "tithings/donations": {
+    items: [
+      { label: "Donation", value: "donation", type: "other", needWant: "Need" },
+      { label: "Tithes", value: "tithes", type: "other", needWant: "Need" }
+    ]
   }
-  autoCategorizeType();
-});
+};
 
-/* ---------- AUTO DATE ---------- */
-document.getElementById('date').value =
-new Date().toISOString().split('T')[0];
-
-/* ---------- AMOUNT FORMAT ---------- */
-const input = document.getElementById("amount");
-input.addEventListener("input", () => {
-  let digits = input.value.replace(/\D/g, "");
-  if (!digits) return input.value = "";
-  input.value = (parseInt(digits,10)/100).toFixed(2);
-});
-
-/* ---------- AUTO-CATEGORIZE TYPE (flexible) ---------- */
-const autoTypeMap = [
-  // Bills (Category + Item specific)
-  { category: "home", item: "electricity", type: "bill" },
-  { category: "home", item: "gasoline", type: "bill" },
-  { category: "home", item: "hoa", type: "bill" },
-  { category: "home", item: "internet", type: "bill" },
-  { category: "home", item: "mortgage/tax", type: "bill" },
-  { category: "home", item: "trash pickup", type: "bill" },
-  { category: "home", item: "water/sewer", type: "bill" },
-  { category: "transportation", item: "insurance/registration", type: "bill" }
-];
-
-// Keywords that indicate a subscription
-const subscriptionKeywords = [
-  "sub",
+const SUBSCRIPTION_KEYWORDS = [
   "subscription",
   "membership",
   "member",
+  "amazon prime",
   "prime",
   "netflix",
-  "apple",
+  "apple storage",
   "pandora"
 ];
 
-function autoCategorizeType() {
-  const categoryVal = categorySelect.value.toLowerCase();
-  const itemVal = itemSelect.value.toLowerCase();
-  const notesVal = document.getElementById("notes").value.toLowerCase();
+/******************************************************************************
+ * INITIALIZATION
+ ******************************************************************************/
 
-  let matched = false;
+function initializeForm() {
+  setTodayAsDefault();
+  populateItems();
+  registerEventListeners();
+}
 
-  // Check explicit bill mappings first
-  autoTypeMap.forEach(rule => {
-    if (rule.category === categoryVal && rule.item === itemVal) {
-      typeSelect.value = rule.type;
-      matched = true;
-    }
+function registerEventListeners() {
+  elements.category.addEventListener("change", handleCategoryChange);
+  elements.item.addEventListener("change", applyItemDefaults);
+  elements.notes.addEventListener("input", applySubscriptionOverride);
+  elements.amount.addEventListener("blur", formatAmountInput);
+  elements.form.addEventListener("submit", showPreview);
+  elements.editButton.addEventListener("click", returnToForm);
+  elements.confirmButton.addEventListener("click", submitTransaction);
+}
+
+/******************************************************************************
+ * CATEGORY, ITEM, TYPE, AND NEED/WANT LOGIC
+ ******************************************************************************/
+
+function handleCategoryChange() {
+  populateItems();
+  clearClassification();
+
+  const category = getSelectedCategory();
+  if (category && category.items.length === 1) {
+    elements.item.value = category.items[0].value;
+    applyItemDefaults();
+  }
+}
+
+function populateItems() {
+  const category = getSelectedCategory();
+  elements.item.replaceChildren();
+
+  if (!category) {
+    elements.item.add(new Option("-- Select a category first --", ""));
+    elements.item.disabled = true;
+    return;
+  }
+
+  elements.item.disabled = false;
+  elements.item.add(new Option("-- Select Item --", ""));
+
+  category.items.forEach(item => {
+    elements.item.add(new Option(item.label, item.value));
   });
+}
 
-  // Then check for subscription keywords in notes
-  if (!matched) {
-    for (let keyword of subscriptionKeywords) {
-      if (notesVal.includes(keyword)) {
-        typeSelect.value = "subscription";
-        matched = true;
-        break;
-      }
-    }
+function applyItemDefaults() {
+  const item = getSelectedItem();
+
+  if (!item) {
+    clearClassification();
+    return;
   }
 
-  // Clear type if nothing matched and it's not income/investment
-  if (!matched && typeSelect.value !== "income" && typeSelect.value !== "investment") {
-    typeSelect.value = "";
+  elements.type.value = item.type;
+  setNeedWant(item.needWant);
+  applySubscriptionOverride();
+}
+
+function applySubscriptionOverride() {
+  const item = getSelectedItem();
+  if (!item) return;
+
+  const protectedTypes = new Set(["bill", "income", "investment"]);
+  if (protectedTypes.has(item.type)) {
+    elements.type.value = item.type;
+    return;
+  }
+
+  const note = elements.notes.value.trim().toLowerCase();
+  const isSubscription = SUBSCRIPTION_KEYWORDS.some(keyword =>
+    note.includes(keyword)
+  );
+
+  elements.type.value = isSubscription ? "subscription" : item.type;
+}
+
+function clearClassification() {
+  elements.type.value = "";
+  elements.need.checked = false;
+  elements.want.checked = false;
+}
+
+function setNeedWant(value) {
+  elements.need.checked = value === "Need";
+  elements.want.checked = value === "Want";
+}
+
+function getSelectedCategory() {
+  return CATEGORY_DATA[elements.category.value] || null;
+}
+
+function getSelectedItem() {
+  const category = getSelectedCategory();
+  if (!category) return null;
+
+  return category.items.find(item => item.value === elements.item.value) || null;
+}
+
+/******************************************************************************
+ * AMOUNT AND DATE HELPERS
+ ******************************************************************************/
+
+function formatAmountInput() {
+  const amount = parseAmount(elements.amount.value);
+  if (amount !== null) {
+    elements.amount.value = amount.toFixed(2);
   }
 }
 
-// Event listeners
-itemSelect.addEventListener("change", autoCategorizeType);
-document.getElementById("notes").addEventListener("input", autoCategorizeType);
-categorySelect.addEventListener("change", autoCategorizeType);
+function parseAmount(value) {
+  const normalized = String(value).replace(/[$,\s]/g, "");
+  const amount = Number(normalized);
+  return Number.isFinite(amount) && amount > 0 ? amount : null;
+}
 
-/* ---------- RECEIPT PREVIEW ---------- */
-const form = document.getElementById("budgetform");
-const previewContainer = document.getElementById("previewContainer");
-const previewContent = document.getElementById("previewContent");
-const editBtn = document.getElementById("editBtn");
-const confirmBtn = document.getElementById("confirmBtn");
-const successMessage = document.getElementById("successMessage");
+function setTodayAsDefault() {
+  const now = new Date();
+  const localDate = new Date(now.getTime() - now.getTimezoneOffset() * 60000)
+    .toISOString()
+    .split("T")[0];
 
-let pendingFormData = null;
+  elements.date.value = localDate;
+}
 
-form.addEventListener("submit", e => {
-  e.preventDefault();
+/******************************************************************************
+ * PREVIEW
+ ******************************************************************************/
 
-  const formData = new FormData(form);
+function showPreview(event) {
+  event.preventDefault();
 
-  if (categorySelect.value === "income") {
-    formData.set("item","income");
-    formData.set("Type","income");
+  applySubscriptionOverride();
+  formatAmountInput();
+
+  if (!elements.form.reportValidity()) return;
+
+  const amount = parseAmount(elements.amount.value);
+  if (amount === null) {
+    elements.amount.setCustomValidity("Enter an amount greater than 0.");
+    elements.amount.reportValidity();
+    elements.amount.setCustomValidity("");
+    return;
   }
 
-  pendingFormData = formData;
+  pendingFormData = new FormData(elements.form);
+  pendingFormData.set("amount", amount.toFixed(2));
 
-  document.getElementById("receiptDate").textContent =
-  formData.get("date");
+  const item = getSelectedItem();
+  const previewRows = [
+    ["Category", getSelectedOptionText(elements.category)],
+    ["Item", item ? item.label : getSelectedOptionText(elements.item)],
+    ["Type", getSelectedOptionText(elements.type)],
+    ["Need/Want", pendingFormData.get("needWant")],
+    ["Note", pendingFormData.get("notes") || "-"]
+  ];
 
-  document.getElementById("receiptAmount").textContent =
-  "$" + formData.get("amount");
+  elements.receiptDate.textContent = formatDateForDisplay(pendingFormData.get("date"));
+  elements.receiptAmount.textContent = formatCurrency(amount);
+  renderPreviewRows(previewRows);
 
-  
-previewContent.innerHTML = `
-  <div><span>Category</span><span>${formData.get("category")}</span></div>
-  <div><span>Item</span><span>${formData.get("item")}</span></div>
-  <div><span>Type</span><span>${formData.get("Type")}</span></div>
-  <div><span>Need/Want</span><span>${formData.get("needWant")}</span></div>
-  <div><span>Note</span><span>${formData.get("notes") || "-"}</span></div>
-`;
-
-
-  form.style.display = "none";
-  previewContainer.style.display = "block";
-
+  elements.form.style.display = "none";
+  elements.success.style.display = "none";
+  elements.previewContainer.style.display = "block";
+  elements.previewContainer.scrollIntoView({ behavior: "smooth", block: "start" });
   subtleVibrate();
-});
-
-/* ---------- EDIT ---------- */
-editBtn.addEventListener("click", () => {
-  previewContainer.style.display = "none";
-  form.style.display = "block";
-});
-
-/* ---------- CONFIRM ---------- */
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzhkJOpfMbyIYsGy5KI5h0--3jyKFF1cEtYLqNMGwnUiK3kLwIx31gmGkPT0Kxzo27q/exec";
-
-confirmBtn.addEventListener("click", () => {
-  fetch(SCRIPT_URL,{
-    method:"POST",
-    body:pendingFormData
-  })
-  .then(()=>{
-    previewContainer.style.display = "none";
-    successMessage.style.display = "block";
-
-    subtleVibrate();
-
-    setTimeout(()=>{
-      successMessage.style.display = "none";
-      form.reset();
-      document.getElementById('date').value =
-      new Date().toISOString().split('T')[0];
-      form.style.display = "block";
-    },1500);
-  })
-  .catch(err=>alert("Error: "+err.message));
-});
-
-/* ---------- SERVICE WORKER ---------- */
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("service-worker.js");
 }
+
+function renderPreviewRows(rows) {
+  elements.previewContent.replaceChildren();
+
+  rows.forEach(([label, value]) => {
+    const row = document.createElement("div");
+    const labelSpan = document.createElement("span");
+    const valueSpan = document.createElement("span");
+
+    labelSpan.textContent = label;
+    valueSpan.textContent = value || "-";
+    row.append(labelSpan, valueSpan);
+    elements.previewContent.appendChild(row);
+  });
+}
+
+function getSelectedOptionText(selectElement) {
+  return selectElement.selectedOptions[0]?.textContent.trim() || "";
+}
+
+function formatCurrency(amount) {
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD"
+  }).format(amount);
+}
+
+function formatDateForDisplay(dateString) {
+  if (!dateString) return "";
+
+  const [year, month, day] = dateString.split("-").map(Number);
+  const date = new Date(year, month - 1, day);
+
+  return new Intl.DateTimeFormat("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric"
+  }).format(date);
+}
+
+function returnToForm() {
+  elements.previewContainer.style.display = "none";
+  elements.form.style.display = "block";
+  elements.form.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+/******************************************************************************
+ * SUBMISSION
+ ******************************************************************************/
+
+async function submitTransaction() {
+  if (!pendingFormData || isSubmitting) return;
+
+  isSubmitting = true;
+  setConfirmButtonState(true);
+
+  try {
+    const response = await fetch(SCRIPT_URL, {
+      method: "POST",
+      body: pendingFormData,
+      redirect: "follow"
+    });
+
+    if (!response.ok) {
+      throw new Error(`Submission failed with status ${response.status}.`);
+    }
+
+    const result = await readJsonResponse(response);
+    if (result.status !== "success") {
+      throw new Error(result.message || "The transaction could not be saved.");
+    }
+
+    showSuccessMessage();
+  } catch (error) {
+    console.error("Transaction submission failed:", error);
+    alert(`Unable to save the transaction. ${error.message}`);
+  } finally {
+    isSubmitting = false;
+    setConfirmButtonState(false);
+  }
+}
+
+async function readJsonResponse(response) {
+  const text = await response.text();
+
+  try {
+    return JSON.parse(text);
+  } catch {
+    throw new Error("The server returned an unexpected response.");
+  }
+}
+
+function setConfirmButtonState(disabled) {
+  elements.confirmButton.disabled = disabled;
+  elements.confirmButton.textContent = disabled ? "Saving..." : "Confirm";
+}
+
+function showSuccessMessage() {
+  elements.previewContainer.style.display = "none";
+  elements.success.style.display = "block";
+  subtleVibrate();
+
+  window.setTimeout(resetFormAfterSuccess, SUCCESS_DISPLAY_MS);
+}
+
+function resetFormAfterSuccess() {
+  elements.form.reset();
+  pendingFormData = null;
+  clearClassification();
+  populateItems();
+  setTodayAsDefault();
+
+  elements.success.style.display = "none";
+  elements.form.style.display = "block";
+  elements.form.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+/******************************************************************************
+ * DEVICE AND SERVICE-WORKER HELPERS
+ ******************************************************************************/
+
+function subtleVibrate() {
+  if ("vibrate" in navigator) {
+    navigator.vibrate(25);
+  }
+}
+
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("service-worker.js").catch(error => {
+      console.warn("Service worker registration failed:", error);
+    });
+  });
+}
+
+initializeForm();
+
 
 </script>
 
