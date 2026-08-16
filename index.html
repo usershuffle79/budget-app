@@ -23,18 +23,59 @@ Created to provide updates, revisions, and Need/Want
 
 <body>
 
-<header>
 
-    <div class="logo">
-        <a href="index.html">
-            <img src="logotransparent2.png"
-                 alt="Lauren, reimagined">
-        </a>
-    </div>
+<!-- Replaced old header with upgraded header + nav system  [8/16/2026] -->
+
+<header class="app-header">
+
+  <div class="logo">
+    <a href="index.html">
+      <img
+        src="logotransparent2.png"
+        alt="Lauren, reimagined"
+      >
+    </a>
+  </div>
 
 </header>
 
+<nav class="app-nav" aria-label="Budget app navigation">
+
+  <button
+    type="button"
+    class="app-nav-btn active"
+    id="showFormBtn"
+    aria-controls="formView"
+    aria-selected="true"
+  >
+    Add Transaction
+  </button>
+
+  <button
+    type="button"
+    class="app-nav-btn"
+    id="showDashboardBtn"
+    aria-controls="dashboardView"
+    aria-selected="false"
+  >
+    Dashboard
+  </button>
+
+</nav>
+
+<!----------  End Additions --------------->
+
 <main>
+
+
+
+<!-- Added Form Wrapping [8/16/2026] -->
+<section
+  id="formView"
+  class="app-view active-view"
+>
+
+<!--------  End Additions ----------------->
 
 <h1>Budget Form</h1>
 
@@ -288,11 +329,46 @@ style="display:none; margin-top:30px;">
 
 <div class="receipt-success">
 
-✔ Saved Successfully
+✔ Saved Successfully!
 
 </div>
 
 </section>
+</section>
+
+<!-- Add Dasbhoard View [8/16/2026]-->
+
+<section
+  id="dashboardView"
+  class="app-view"
+  hidden
+>
+
+  <div class="dashboard-placeholder">
+
+    <h1>Dashboard</h1>
+
+    <p>
+      Your live financial dashboard will appear here.
+    </p>
+
+    <div class="dashboard-status">
+      <span
+        class="status-dot"
+        aria-hidden="true"
+      ></span>
+
+      <span>
+        Dashboard API connected and ready.
+      </span>
+    </div>
+
+  </div>
+
+</section>
+
+<!------- End of Additions  ------->
+
 
 </main>
 
@@ -320,6 +396,11 @@ const SUCCESS_DISPLAY_MS = 1500;
  ******************************************************************************/
 
 const elements = {
+  formView: document.getElementById("formView"),
+  dashboardView: document.getElementById("dashboardView"),
+  showFormButton: document.getElementById("showFormBtn"),
+  showDashboardButton: document.getElementById("showDashboardBtn"),
+
   form: document.getElementById("budgetform"),
   category: document.getElementById("category"),
   item: document.getElementById("item"),
@@ -449,6 +530,9 @@ function initializeForm() {
 }
 
 function registerEventListeners() {
+  elements.showFormButton.addEventListener("click", showFormView);
+  elements.showDashboardButton.addEventListener("click", showDashboardView);
+
   elements.category.addEventListener("change", handleCategoryChange);
   elements.item.addEventListener("change", applyItemDefaults);
   elements.notes.addEventListener("input", applySubscriptionOverride);
@@ -457,6 +541,54 @@ function registerEventListeners() {
   elements.editButton.addEventListener("click", returnToForm);
   elements.confirmButton.addEventListener("click", submitTransaction);
 }
+
+/******************************************************************************
+ * APP VIEW NAVIGATION [8/16/2026]
+ ******************************************************************************/
+
+function showFormView() {
+  elements.formView.hidden = false;
+  elements.dashboardView.hidden = true;
+
+  elements.formView.classList.add("active-view");
+  elements.dashboardView.classList.remove("active-view");
+
+  elements.showFormButton.classList.add("active");
+  elements.showDashboardButton.classList.remove("active");
+
+  elements.showFormButton.setAttribute(
+    "aria-selected",
+    "true"
+  );
+
+  elements.showDashboardButton.setAttribute(
+    "aria-selected",
+    "false"
+  );
+}
+
+
+function showDashboardView() {
+  elements.formView.hidden = true;
+  elements.dashboardView.hidden = false;
+
+  elements.formView.classList.remove("active-view");
+  elements.dashboardView.classList.add("active-view");
+
+  elements.showFormButton.classList.remove("active");
+  elements.showDashboardButton.classList.add("active");
+
+  elements.showFormButton.setAttribute(
+    "aria-selected",
+    "false"
+  );
+
+  elements.showDashboardButton.setAttribute(
+    "aria-selected",
+    "true"
+  );
+}
+
 
 /******************************************************************************
  * CATEGORY, ITEM, TYPE, AND NEED/WANT LOGIC
