@@ -28,6 +28,87 @@ form button,
   border: none;
 }
 
+
+/* ---------- MULTI-COLUMN SORTING ---------- */
+
+.table-sort-btn {
+  display: inline-flex;
+  align-items: center;
+
+  gap: 5px;
+}
+
+
+.table-sort-btn.sort-active {
+  color: #0E6F6B;
+
+  font-weight: 700;
+}
+
+
+.sort-indicator {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-width: 18px;
+
+  color: #0E6F6B;
+
+  font-size: 10px;
+  font-weight: 700;
+}
+
+
+.table-sort-help {
+  margin: 5px 0 0;
+
+  color: #888;
+
+  font-size: 11px;
+}
+
+
+.notes-cell {
+  min-width: 180px;
+  max-width: 280px;
+
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  color: #666;
+}
+
+
+.notes-cell:hover {
+  white-space: normal;
+}
+
+
+.explore-table thead th {
+  position: sticky;
+  top: 0;
+
+  z-index: 2;
+
+  background: white;
+}
+
+
+
+.explore-table-wrapper {
+  max-height: 520px;
+
+  overflow: auto;
+}
+
+
+
+
+
+
 /* ---------- APP HEADER ---------- */
 
 .app-header {
