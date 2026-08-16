@@ -462,7 +462,7 @@ style="display:none; margin-top:30px;">
           </option>
 
           <option value="month">
-            This Month
+            Month
           </option>
 
           <option value="week">
@@ -935,6 +935,34 @@ style="display:none; margin-top:30px;">
     </div>
 
 
+<div
+  id="exploreMonthGroup"
+  class="filter-group"
+  hidden
+>
+  <label for="exploreMonth">
+    Month
+  </label>
+
+  <select id="exploreMonth">
+
+    <option value="1">January</option>
+    <option value="2">February</option>
+    <option value="3">March</option>
+    <option value="4">April</option>
+    <option value="5">May</option>
+    <option value="6">June</option>
+    <option value="7">July</option>
+    <option value="8">August</option>
+    <option value="9">September</option>
+    <option value="10">October</option>
+    <option value="11">November</option>
+    <option value="12">December</option>
+
+  </select>
+</div>
+
+
     <div
       id="customDateControls"
       class="custom-date-controls"
@@ -1138,6 +1166,30 @@ style="display:none; margin-top:30px;">
     </div>
 
   </section>
+
+
+<!-- =========================================
+     ACTIVE FILTERS
+========================================== -->
+
+<section
+  id="exploreActiveFilters"
+  class="explore-active-filters"
+  hidden
+>
+
+  <span class="active-filters-label">
+    Active filters
+  </span>
+
+  <div
+    id="exploreFilterChips"
+    class="explore-filter-chips"
+  >
+  </div>
+
+</section>
+
 
 
   <!-- =========================================
@@ -1424,6 +1476,26 @@ const elements = {
   exploreBreakdown: document.getElementById("exploreBreakdown"),
   exploreMetric: document.getElementById("exploreMetric"),
 
+exploreMonthGroup:
+  document.getElementById(
+    "exploreMonthGroup"
+  ),
+
+exploreMonth:
+  document.getElementById(
+    "exploreMonth"
+  ),
+
+exploreActiveFilters:
+  document.getElementById(
+    "exploreActiveFilters"
+  ),
+
+exploreFilterChips:
+  document.getElementById(
+    "exploreFilterChips"
+  ),
+
   customDateControls: document.getElementById("customDateControls"),
   exploreStartDate: document.getElementById("exploreStartDate"),
   exploreEndDate: document.getElementById("exploreEndDate"),
@@ -1649,6 +1721,11 @@ function registerEventListeners() {
   );
 
 
+elements.exploreMonth.addEventListener(
+  "change",
+  updateExplorer
+);
+
   elements.showOverviewButton.addEventListener(
     "click",
     showOverviewPanel
@@ -1664,10 +1741,24 @@ function registerEventListeners() {
     resetExploreFilters
   );
 
-  elements.exploreYear.addEventListener(
-    "change",
-    updateExplorer
-  );
+elements.exploreYear.addEventListener(
+  "change",
+  handleExploreYearChange
+);
+
+
+function handleExploreYearChange() {
+
+  /*
+   * If we're currently using Month,
+   * keep the existing month selection.
+   *
+   * The year simply changes which year's
+   * version of that month we're viewing.
+   */
+
+  updateExplorer();
+}
 
   elements.explorePeriod.addEventListener(
     "change",
@@ -2308,6 +2399,8 @@ function updateDashboardOverview() {
     return;
   }
 
+renderExploreFilterChips();
+
   const filtered =
     getFilteredDashboardTransactions();
 
@@ -2488,6 +2581,15 @@ function initializeExplorer() {
   populateExploreItems();
 
   elements.explorePeriod.value = "ytd";
+
+elements.exploreMonth.value =
+  String(
+    new Date().getMonth() + 1
+  );
+
+elements.exploreMonthGroup.hidden =
+  true;
+
   elements.explorePerson.value = "All";
   elements.exploreCategory.value = "All";
   elements.exploreItem.value = "All";
@@ -2683,12 +2785,60 @@ function handleExploreCategoryChange() {
 
 function handleExplorePeriodChange() {
 
+  const period =
+    elements.explorePeriod.value;
+
   const isCustom =
-    elements.explorePeriod.value ===
-    "custom";
+    period === "custom";
+
+  const isMonth =
+    period === "month";
+
 
   elements.customDateControls.hidden =
     !isCustom;
+
+  elements.exploreMonthGroup.hidden =
+    !isMonth;
+
+
+  /*
+   * When Month is first selected,
+   * default to the current month if
+   * we're viewing the current year.
+   *
+   * Otherwise default to January.
+   */
+  if (isMonth) {
+
+    const selectedYear =
+      Number(
+        elements.exploreYear.value
+      );
+
+    const today =
+      new Date();
+
+
+    if (
+      selectedYear ===
+      today.getFullYear()
+    ) {
+
+      elements.exploreMonth.value =
+        String(
+          today.getMonth() + 1
+        );
+
+    } else if (
+      !elements.exploreMonth.value
+    ) {
+
+      elements.exploreMonth.value =
+        "1";
+    }
+  }
+
 
   updateExplorer();
 }
@@ -2853,18 +3003,22 @@ function getExplorerTransactions() {
       }
 
 
-      if (period === "month") {
+if (period === "month") {
 
-        if (
-          selectedYear !==
-            today.getFullYear() ||
-          date.getMonth() !==
-            today.getMonth()
-        ) {
-          return false;
-        }
+  const selectedMonth =
+    Number(
+      elements.exploreMonth.value
+    );
 
-      }
+
+  if (
+    date.getMonth() + 1 !==
+    selectedMonth
+  ) {
+    return false;
+  }
+
+}
 
 
       if (period === "week") {
@@ -3993,14 +4147,20 @@ function updateExploreSortIndicators() {
 
 
 
-
-
 function resetExploreFilters() {
 
   populateExploreYears();
 
   elements.explorePeriod.value =
     "ytd";
+
+elements.exploreMonth.value =
+  String(
+    new Date().getMonth() + 1
+  );
+
+elements.exploreMonthGroup.hidden =
+  true;
 
   elements.explorePerson.value =
     "All";
@@ -4050,6 +4210,429 @@ exploreSorts = [
 }
 
 
+
+/******************************************************************************
+ * EXPLORER ACTIVE FILTERS
+ ******************************************************************************/
+
+function renderExploreFilterChips() {
+
+  const filters =
+    getExploreActiveFilters();
+
+
+  elements.exploreFilterChips
+    .replaceChildren();
+
+
+  if (!filters.length) {
+
+    elements.exploreActiveFilters.hidden =
+      true;
+
+    return;
+  }
+
+
+  elements.exploreActiveFilters.hidden =
+    false;
+
+
+  filters.forEach(filter => {
+
+    const button =
+      document.createElement("button");
+
+
+    button.type =
+      "button";
+
+    button.className =
+      "explore-filter-chip";
+
+
+    const text =
+      document.createElement("span");
+
+    text.textContent =
+      filter.label;
+
+
+    const remove =
+      document.createElement("span");
+
+    remove.className =
+      "filter-chip-remove";
+
+    remove.textContent =
+      "×";
+
+    remove.setAttribute(
+      "aria-hidden",
+      "true"
+    );
+
+
+    button.append(
+      text,
+      remove
+    );
+
+
+    button.setAttribute(
+      "aria-label",
+      `Remove filter ${filter.label}`
+    );
+
+
+    button.addEventListener(
+      "click",
+      () => {
+        clearExploreFilter(
+          filter.key
+        );
+      }
+    );
+
+
+    elements.exploreFilterChips
+      .appendChild(button);
+  });
+}
+
+
+/***************************************************************************
+* Define Which filters become chips
+***************************************************************************/
+
+function getExploreActiveFilters() {
+
+  const filters = [];
+
+
+  /*
+   * Year is always relevant.
+   */
+  if (
+    elements.exploreYear.value
+  ) {
+
+    filters.push({
+      key: "year",
+      label:
+        elements.exploreYear.value
+    });
+  }
+
+
+  /*
+   * Period
+   */
+  const period =
+    elements.explorePeriod.value;
+
+
+  if (period === "ytd") {
+
+    filters.push({
+      key: "period",
+      label: "YTD"
+    });
+
+  } else if (
+    period === "fullYear"
+  ) {
+
+    filters.push({
+      key: "period",
+      label: "Full Year"
+    });
+
+  } else if (
+    period === "week"
+  ) {
+
+    filters.push({
+      key: "period",
+      label: "This Week"
+    });
+
+  } else if (
+    period === "month"
+  ) {
+
+    const monthName =
+      elements.exploreMonth
+        .selectedOptions[0]
+        ?.textContent
+        .trim();
+
+
+    if (monthName) {
+
+      filters.push({
+        key: "month",
+        label: monthName
+      });
+    }
+
+  } else if (
+    period === "custom"
+  ) {
+
+    const start =
+      elements.exploreStartDate.value;
+
+    const end =
+      elements.exploreEndDate.value;
+
+
+    let label =
+      "Custom Dates";
+
+
+    if (start && end) {
+
+      label =
+        `${formatShortDate(start)} – ` +
+        `${formatShortDate(end)}`;
+
+    } else if (start) {
+
+      label =
+        `From ${formatShortDate(start)}`;
+
+    } else if (end) {
+
+      label =
+        `Through ${formatShortDate(end)}`;
+    }
+
+
+    filters.push({
+      key: "customDates",
+      label: label
+    });
+  }
+
+
+  addExploreFilterIfActive(
+    filters,
+    "person",
+    elements.explorePerson,
+    "All"
+  );
+
+
+  addExploreFilterIfActive(
+    filters,
+    "category",
+    elements.exploreCategory,
+    "All"
+  );
+
+
+  addExploreFilterIfActive(
+    filters,
+    "item",
+    elements.exploreItem,
+    "All"
+  );
+
+
+  addExploreFilterIfActive(
+    filters,
+    "type",
+    elements.exploreType,
+    "All"
+  );
+
+
+  addExploreFilterIfActive(
+    filters,
+    "needWant",
+    elements.exploreNeedWant,
+    "All"
+  );
+
+
+  const search =
+    elements.exploreSearch.value
+      .trim();
+
+
+  if (search) {
+
+    filters.push({
+      key: "search",
+      label: `Search: ${search}`
+    });
+  }
+
+
+  return filters;
+}
+
+
+/****************************************************
+* Add Helper for Dropdown Chips
+****************************************************/
+
+function addExploreFilterIfActive(
+  filters,
+  key,
+  selectElement,
+  inactiveValue
+) {
+
+  if (
+    selectElement.value ===
+    inactiveValue
+  ) {
+    return;
+  }
+
+
+  const label =
+    selectElement
+      .selectedOptions[0]
+      ?.textContent
+      .trim();
+
+
+  if (!label) {
+    return;
+  }
+
+
+  filters.push({
+    key: key,
+    label: label
+  });
+}
+
+
+/*******************************************************************
+* Make Chips Removable
+********************************************************************/
+
+function clearExploreFilter(
+  key
+) {
+
+  switch (key) {
+
+    case "year":
+
+      /*
+       * Year is required for Explorer,
+       * so removing it means return to
+       * the current/default year.
+       */
+      populateExploreYears();
+      break;
+
+
+    case "period":
+
+      elements.explorePeriod.value =
+        "ytd";
+
+      elements.exploreMonthGroup.hidden =
+        true;
+
+      elements.customDateControls.hidden =
+        true;
+
+      break;
+
+
+    case "month":
+
+      /*
+       * Removing a month returns
+       * Period to YTD.
+       */
+      elements.explorePeriod.value =
+        "ytd";
+
+      elements.exploreMonthGroup.hidden =
+        true;
+
+      break;
+
+
+    case "customDates":
+
+      elements.explorePeriod.value =
+        "ytd";
+
+      elements.exploreStartDate.value =
+        "";
+
+      elements.exploreEndDate.value =
+        "";
+
+      elements.customDateControls.hidden =
+        true;
+
+      break;
+
+
+    case "person":
+
+      elements.explorePerson.value =
+        "All";
+
+      break;
+
+
+    case "category":
+
+      elements.exploreCategory.value =
+        "All";
+
+      populateExploreItems();
+
+      break;
+
+
+    case "item":
+
+      elements.exploreItem.value =
+        "All";
+
+      break;
+
+
+    case "type":
+
+      elements.exploreType.value =
+        "All";
+
+      break;
+
+
+    case "needWant":
+
+      elements.exploreNeedWant.value =
+        "All";
+
+      break;
+
+
+    case "search":
+
+      elements.exploreSearch.value =
+        "";
+
+      break;
+
+  }
+
+
+  updateExplorer();
+}
 
 
 
