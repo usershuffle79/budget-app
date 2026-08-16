@@ -616,6 +616,8 @@ style="display:none; margin-top:30px;">
 
         </article>
 
+      </div>
+
 <!-- =========================================
      OVERVIEW CHARTS
 ========================================== -->
@@ -835,21 +837,9 @@ style="display:none; margin-top:30px;">
         </div>
 
       </section>
-
     </section>
 
-  </div>
-
-
-<section
-  id="dashboardContent"
-  class="dashboard-content"
-  hidden
->
-
-</section>
-
-</section>
+  </section>
 
 
 <!-- =========================================
@@ -923,7 +913,7 @@ style="display:none; margin-top:30px;">
         </option>
 
         <option value="week">
-          This Week
+          Week
         </option>
 
         <option value="custom">
@@ -959,6 +949,20 @@ style="display:none; margin-top:30px;">
     <option value="11">November</option>
     <option value="12">December</option>
 
+  </select>
+</div>
+
+
+<div
+  id="exploreWeekGroup"
+  class="filter-group"
+  hidden
+>
+  <label for="exploreWeek">
+    Week
+  </label>
+
+  <select id="exploreWeek">
   </select>
 </div>
 
@@ -1452,8 +1456,9 @@ style="display:none; margin-top:30px;">
 
 </section>
 
+  </div>
 
-
+</section>
 
 <!------- End of Additions  ------->
 
@@ -1461,9 +1466,9 @@ style="display:none; margin-top:30px;">
 </main>
 
 
-<!- -------------------------------------------------- JAVA SCRIPT --------------------------------------------------- ->
-<!- -------------------------------------------------- JAVA SCRIPT --------------------------------------------------- ->
-<!- -------------------------------------------------- JAVA SCRIPT --------------------------------------------------- ->
+<!-- -------------------------------------------------- JAVA SCRIPT --------------------------------------------------- -->
+<!-- -------------------------------------------------- JAVA SCRIPT --------------------------------------------------- -->
+<!-- -------------------------------------------------- JAVA SCRIPT --------------------------------------------------- -->
 
 
 <script>
@@ -1528,6 +1533,16 @@ exploreMonthGroup:
 exploreMonth:
   document.getElementById(
     "exploreMonth"
+  ),
+
+exploreWeekGroup:
+  document.getElementById(
+    "exploreWeekGroup"
+  ),
+
+exploreWeek:
+  document.getElementById(
+    "exploreWeek"
   ),
 
 exploreActiveFilters:
@@ -1628,6 +1643,7 @@ let spendingTrendChart = null;
 
 
 let exploreChart = null;
+let exploreDrilldown = null;
 
 let exploreSorts = [
   {
@@ -1636,8 +1652,6 @@ let exploreSorts = [
   }
 ];
 
-
-let exploreChart = null;
 
 /******************************************************************************
  * CHART CONFIGURATION
@@ -1870,6 +1884,11 @@ elements.exploreMonth.addEventListener(
   updateExplorer
 );
 
+elements.exploreWeek.addEventListener(
+  "change",
+  updateExplorer
+);
+
   elements.showOverviewButton.addEventListener(
     "click",
     showOverviewPanel
@@ -1891,18 +1910,6 @@ elements.exploreYear.addEventListener(
 );
 
 
-function handleExploreYearChange() {
-
-  /*
-   * If we're currently using Month,
-   * keep the existing month selection.
-   *
-   * The year simply changes which year's
-   * version of that month we're viewing.
-   */
-
-  updateExplorer();
-}
 
   elements.explorePeriod.addEventListener(
     "change",
@@ -2543,8 +2550,6 @@ function updateDashboardOverview() {
     return;
   }
 
-renderExploreFilterChips();
-
   const filtered =
     getFilteredDashboardTransactions();
 
@@ -2734,6 +2739,11 @@ elements.exploreMonth.value =
 elements.exploreMonthGroup.hidden =
   true;
 
+  elements.exploreWeekGroup.hidden =
+    true;
+
+  populateExploreWeeks();
+
   elements.explorePerson.value = "All";
   elements.exploreCategory.value = "All";
   elements.exploreItem.value = "All";
@@ -2802,6 +2812,78 @@ function populateExploreYears() {
         ? String(thisYear)
         : String(years[0] || "");
   }
+}
+
+
+function populateExploreWeeks() {
+
+  const selectedYear =
+    Number(elements.exploreYear.value);
+
+  const currentValue =
+    elements.exploreWeek.value;
+
+  const weeks = [
+    ...new Set(
+      dashboardTransactions
+        .filter(transaction =>
+          Number(transaction.year) === selectedYear
+        )
+        .map(transaction => Number(transaction.week))
+        .filter(week =>
+          Number.isFinite(week) && week > 0
+        )
+    )
+  ].sort((a, b) => a - b);
+
+  elements.exploreWeek.replaceChildren();
+
+  weeks.forEach(week => {
+    elements.exploreWeek.add(
+      new Option(`Week ${week}`, String(week))
+    );
+  });
+
+  if (weeks.includes(Number(currentValue))) {
+    elements.exploreWeek.value = currentValue;
+    return;
+  }
+
+  const today = new Date();
+  const currentWeek = getClientIsoWeekNumber(today);
+
+  if (
+    selectedYear === today.getFullYear() &&
+    weeks.includes(currentWeek)
+  ) {
+    elements.exploreWeek.value = String(currentWeek);
+  } else if (weeks.length) {
+    elements.exploreWeek.value =
+      String(weeks[weeks.length - 1]);
+  }
+}
+
+
+function getClientIsoWeekNumber(date) {
+
+  const d = new Date(
+    Date.UTC(
+      date.getFullYear(),
+      date.getMonth(),
+      date.getDate()
+    )
+  );
+
+  const dayNum = d.getUTCDay() || 7;
+  d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+
+  const yearStart = new Date(
+    Date.UTC(d.getUTCFullYear(), 0, 1)
+  );
+
+  return Math.ceil(
+    (((d - yearStart) / 86400000) + 1) / 7
+  );
 }
 
 
@@ -2927,66 +3009,47 @@ function handleExploreCategoryChange() {
 }
 
 
-function handleExplorePeriodChange() {
+function handleExploreYearChange() {
 
-  const period =
-    elements.explorePeriod.value;
-
-  const isCustom =
-    period === "custom";
-
-  const isMonth =
-    period === "month";
-
-
-  elements.customDateControls.hidden =
-    !isCustom;
-
-  elements.exploreMonthGroup.hidden =
-    !isMonth;
-
-
-  /*
-   * When Month is first selected,
-   * default to the current month if
-   * we're viewing the current year.
-   *
-   * Otherwise default to January.
-   */
-  if (isMonth) {
-
-    const selectedYear =
-      Number(
-        elements.exploreYear.value
-      );
-
-    const today =
-      new Date();
-
-
-    if (
-      selectedYear ===
-      today.getFullYear()
-    ) {
-
-      elements.exploreMonth.value =
-        String(
-          today.getMonth() + 1
-        );
-
-    } else if (
-      !elements.exploreMonth.value
-    ) {
-
-      elements.exploreMonth.value =
-        "1";
-    }
+  if (
+    elements.explorePeriod.value ===
+    "week"
+  ) {
+    populateExploreWeeks();
   }
-
 
   updateExplorer();
 }
 
+
+function handleExplorePeriodChange() {
+
+  const period = elements.explorePeriod.value;
+  const isCustom = period === "custom";
+  const isMonth = period === "month";
+  const isWeek = period === "week";
+
+  elements.customDateControls.hidden = !isCustom;
+  elements.exploreMonthGroup.hidden = !isMonth;
+  elements.exploreWeekGroup.hidden = !isWeek;
+
+  if (isMonth) {
+    const selectedYear = Number(elements.exploreYear.value);
+    const today = new Date();
+
+    if (selectedYear === today.getFullYear()) {
+      elements.exploreMonth.value = String(today.getMonth() + 1);
+    } else if (!elements.exploreMonth.value) {
+      elements.exploreMonth.value = "1";
+    }
+  }
+
+  if (isWeek) {
+    populateExploreWeeks();
+  }
+
+  updateExplorer();
+}
 
 
 /******************************************************************************
@@ -3164,18 +3227,17 @@ if (period === "month") {
 
 }
 
-
       if (period === "week") {
 
+        const selectedWeek =
+          Number(elements.exploreWeek.value);
+
         if (
-          date <
-            getStartOfWeek(today) ||
-          date >
-            getEndOfWeek(today)
+          Number(transaction.week) !==
+          selectedWeek
         ) {
           return false;
         }
-
       }
 
 
@@ -3252,15 +3314,10 @@ function updateExplorer() {
     return;
   }
 
-/*
- * A normal filter/control change invalidates
- * any temporary chart drill-down.
- */
-exploreDrilldown = null;
-
-renderExploreDrilldown();
-
-
+  /* Normal Explorer control changes clear temporary drill-down. */
+  exploreDrilldown = null;
+  renderExploreDrilldown();
+  renderExploreFilterChips();
 
   const transactions =
     getExplorerTransactions();
@@ -3929,15 +3986,10 @@ function renderExploreTable(
   transactions
 ) {
 
-  elements.exploreTableBody
-    .replaceChildren();
-
+  elements.exploreTableBody.replaceChildren();
 
   const sorted =
-    sortExplorerTransactions(
-      transactions
-    );
-
+    sortExplorerTransactions(transactions);
 
   elements.exploreTableDescription.textContent =
     `${transactions.length} matching ${
@@ -3946,114 +3998,55 @@ function renderExploreTable(
         : "transactions"
     }`;
 
+  if (!sorted.length) {
+    const row = document.createElement("tr");
+    const cell = document.createElement("td");
 
- if (!sorted.length) {
+    cell.colSpan = 8;
+    cell.className = "explore-table-empty";
+    cell.textContent = "No matching transactions.";
 
-  const row =
-    document.createElement("tr");
+    row.appendChild(cell);
+    elements.exploreTableBody.appendChild(row);
+    updateExploreSortIndicators();
+    return;
+  }
 
-  const cell =
-    document.createElement("td");
+  sorted.forEach(transaction => {
+    const row = document.createElement("tr");
 
-  cell.colSpan = 8;
+    const cells = [
+      formatShortDate(transaction.date),
+      transaction.person,
+      formatItemLabel(transaction.category),
+      formatItemLabel(transaction.item),
+      formatItemLabel(transaction.type),
+      transaction.needWant,
+      transaction.notes || "-",
+      formatCurrency(transaction.amount)
+    ];
 
-  cell.className =
-    "explore-table-empty";
+    cells.forEach((value, index) => {
+      const cell = document.createElement("td");
+      cell.textContent = value || "-";
 
-  cell.textContent =
-    "No matching transactions.";
+      if (index === 6) {
+        cell.classList.add("notes-cell");
+        cell.title = transaction.notes || "";
+      }
 
-  row.appendChild(cell);
+      if (index === 7) {
+        cell.classList.add("amount-cell");
+      }
 
-  elements.exploreTableBody
-    .appendChild(row);
+      row.appendChild(cell);
+    });
+
+    elements.exploreTableBody.appendChild(row);
+  });
 
   updateExploreSortIndicators();
-
-  return;
-
-updateExploreSortIndicators();
 }
-
-/*** Check lines above here for potential errors ****/
-
-  sorted.forEach(
-    transaction => {
-
-      const row =
-        document.createElement("tr");
-
-
-      const cells = [
-
-  formatShortDate(
-    transaction.date
-  ),
-
-  transaction.person,
-
-  formatItemLabel(
-    transaction.category
-  ),
-
-  formatItemLabel(
-    transaction.item
-  ),
-
-  formatItemLabel(
-    transaction.type
-  ),
-
-  transaction.needWant,
-
-  transaction.notes || "-",
-
-  formatCurrency(
-    transaction.amount
-  )
-
-];
-
-
-      cells.forEach(
-        (value, index) => {
-
-          const cell =
-            document.createElement("td");
-
-          cell.textContent =
-            value || "-";
-
-
-	if (index === 6) {
-
- 	 cell.classList.add(
-    	"notes-cell"
-  	);
-	}
-
-
-
-          if (index === 7) {
-
-            cell.classList.add(
-              "amount-cell"
-            );
-          }
-
-
-          row.appendChild(cell);
-
-        }
-      );
-
-
-      elements.exploreTableBody
-        .appendChild(row);
-    }
-  );
-}
-
 
 
 
@@ -4367,6 +4360,11 @@ elements.exploreMonth.value =
 elements.exploreMonthGroup.hidden =
   true;
 
+  elements.exploreWeekGroup.hidden =
+    true;
+
+  populateExploreWeeks();
+
   elements.explorePerson.value =
     "All";
 
@@ -4557,10 +4555,18 @@ function getExploreActiveFilters() {
     period === "week"
   ) {
 
-    filters.push({
-      key: "period",
-      label: "This Week"
-    });
+    const weekLabel =
+      elements.exploreWeek
+        .selectedOptions[0]
+        ?.textContent
+        .trim();
+
+    if (weekLabel) {
+      filters.push({
+        key: "week",
+        label: weekLabel
+      });
+    }
 
   } else if (
     period === "month"
@@ -4762,6 +4768,17 @@ function clearExploreFilter(
         "ytd";
 
       elements.exploreMonthGroup.hidden =
+        true;
+
+      break;
+
+
+    case "week":
+
+      elements.explorePeriod.value =
+        "ytd";
+
+      elements.exploreWeekGroup.hidden =
         true;
 
       break;
