@@ -174,6 +174,92 @@ form button,
 }
 
 
+/* =========================================================
+   DASHBOARD CHARTS
+========================================================= */
+
+.dashboard-chart-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+
+  gap: 18px;
+
+  margin-bottom: 24px;
+}
+
+
+.chart-card {
+  min-width: 0;
+
+  padding: 20px;
+
+  background: white;
+
+  border-radius: 14px;
+
+  box-shadow:
+    0 5px 18px rgba(0, 0, 0, 0.07);
+}
+
+
+.chart-card-wide {
+  grid-column: 1 / -1;
+}
+
+
+.chart-card-header {
+  margin-bottom: 14px;
+}
+
+
+.chart-card-header h2 {
+  margin: 0 0 4px;
+
+  font-size: 1.1rem;
+}
+
+
+.chart-card-header p {
+  margin: 0;
+
+  color: #777;
+
+  font-size: 13px;
+}
+
+
+.chart-wrapper {
+  position: relative;
+
+  width: 100%;
+  height: 320px;
+}
+
+
+.chart-wrapper-large {
+  height: 360px;
+}
+
+
+.chart-wrapper canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+
+.chart-empty {
+  padding: 40px 20px;
+
+  text-align: center;
+
+  color: #777;
+
+  font-size: 14px;
+}
+
+
 /* ---------- LOADING STATUS ---------- */
 
 .dashboard-load-status {
@@ -527,6 +613,30 @@ button.secondary {
 ========================================================= */
 
 @media (max-width: 700px) {
+
+ .dashboard-chart-grid {
+    grid-template-columns: 1fr;
+  }
+
+
+  .chart-card-wide {
+    grid-column: auto;
+  }
+
+
+  .chart-card {
+    padding: 16px;
+  }
+
+
+  .chart-wrapper {
+    height: 300px;
+  }
+
+
+  .chart-wrapper-large {
+    height: 320px;
+  }
 
   .dashboard-header {
     align-items: flex-start;
