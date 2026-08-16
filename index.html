@@ -391,9 +391,45 @@ style="display:none; margin-top:30px;">
     </div>
 
 
+<!-- =========================================
+     DASHBOARD MODE NAVIGATION
+========================================== -->
+
+<nav
+  id="dashboardModeNav"
+  class="dashboard-mode-nav"
+  aria-label="Dashboard views"
+  hidden
+>
+  <button
+    type="button"
+    id="showOverviewBtn"
+    class="dashboard-mode-btn active"
+    aria-selected="true"
+  >
+    Overview
+  </button>
+
+  <button
+    type="button"
+    id="showExploreBtn"
+    class="dashboard-mode-btn"
+    aria-selected="false"
+  >
+    Explore
+  </button>
+</nav>
+
+
     <!-- =========================================
          OVERVIEW FILTERS
     ========================================== -->
+
+	<section
+	  id="overviewPanel"
+	  class="dashboard-panel"
+	>
+
 
     <section
       id="dashboardFilters"
@@ -804,7 +840,464 @@ style="display:none; margin-top:30px;">
 
   </div>
 
+
+<section
+  id="dashboardContent"
+  class="dashboard-content"
+  hidden
+>
+
 </section>
+
+</section>
+
+
+<!-- =========================================
+     EXPLORE
+========================================== -->
+
+<section
+  id="explorePanel"
+  class="dashboard-panel"
+  hidden
+>
+
+  <section class="explore-header">
+
+    <div>
+      <h2>Explore Your Spending</h2>
+
+      <p>
+        Filter, group, and analyze transactions
+        from your live budget data.
+      </p>
+    </div>
+
+    <button
+      type="button"
+      id="resetExploreBtn"
+      class="explore-reset-btn"
+    >
+      Reset
+    </button>
+
+  </section>
+
+
+  <!-- =========================================
+       EXPLORE FILTERS
+  ========================================== -->
+
+  <section class="explore-controls">
+
+    <div class="filter-group">
+
+      <label for="exploreYear">
+        Year
+      </label>
+
+      <select id="exploreYear">
+      </select>
+
+    </div>
+
+
+    <div class="filter-group">
+
+      <label for="explorePeriod">
+        Period
+      </label>
+
+      <select id="explorePeriod">
+
+        <option value="ytd">
+          Year to Date
+        </option>
+
+        <option value="fullYear">
+          Full Year
+        </option>
+
+        <option value="month">
+          This Month
+        </option>
+
+        <option value="week">
+          This Week
+        </option>
+
+        <option value="custom">
+          Custom Dates
+        </option>
+
+      </select>
+
+    </div>
+
+
+    <div
+      id="customDateControls"
+      class="custom-date-controls"
+      hidden
+    >
+
+      <div class="filter-group">
+
+        <label for="exploreStartDate">
+          Start
+        </label>
+
+        <input
+          type="date"
+          id="exploreStartDate"
+        >
+
+      </div>
+
+      <div class="filter-group">
+
+        <label for="exploreEndDate">
+          End
+        </label>
+
+        <input
+          type="date"
+          id="exploreEndDate"
+        >
+
+      </div>
+
+    </div>
+
+
+    <div class="filter-group">
+
+      <label for="explorePerson">
+        Person
+      </label>
+
+      <select id="explorePerson">
+
+        <option value="All">All</option>
+        <option value="Household">Household</option>
+        <option value="Lauren">Lauren</option>
+        <option value="Sam">Sam</option>
+
+      </select>
+
+    </div>
+
+
+    <div class="filter-group">
+
+      <label for="exploreCategory">
+        Category
+      </label>
+
+      <select id="exploreCategory">
+        <option value="All">All Categories</option>
+      </select>
+
+    </div>
+
+
+    <div class="filter-group">
+
+      <label for="exploreItem">
+        Item
+      </label>
+
+      <select id="exploreItem">
+        <option value="All">All Items</option>
+      </select>
+
+    </div>
+
+
+    <div class="filter-group">
+
+      <label for="exploreType">
+        Type
+      </label>
+
+      <select id="exploreType">
+
+        <option value="All">All Types</option>
+        <option value="bill">Bill</option>
+        <option value="subscription">Subscription</option>
+        <option value="other">Other Expense</option>
+        <option value="income">Income</option>
+        <option value="investment">Investment</option>
+
+      </select>
+
+    </div>
+
+
+    <div class="filter-group">
+
+      <label for="exploreNeedWant">
+        Need / Want
+      </label>
+
+      <select id="exploreNeedWant">
+
+        <option value="All">All</option>
+        <option value="Need">Need</option>
+        <option value="Want">Want</option>
+        <option value="Unclassified">Unclassified</option>
+
+      </select>
+
+    </div>
+
+
+    <div class="filter-group explore-search-group">
+
+      <label for="exploreSearch">
+        Search
+      </label>
+
+      <input
+        type="search"
+        id="exploreSearch"
+        placeholder="Amazon, vet, hotel..."
+        autocomplete="off"
+      >
+
+    </div>
+
+
+    <div class="filter-group">
+
+      <label for="exploreBreakdown">
+        Break Down By
+      </label>
+
+      <select id="exploreBreakdown">
+
+        <option value="month">
+          Month
+        </option>
+
+        <option value="week">
+          Week
+        </option>
+
+        <option value="category">
+          Category
+        </option>
+
+        <option value="item">
+          Item
+        </option>
+
+        <option value="person">
+          Person
+        </option>
+
+        <option value="type">
+          Type
+        </option>
+
+        <option value="needWant">
+          Need / Want
+        </option>
+
+      </select>
+
+    </div>
+
+
+    <div class="filter-group">
+
+      <label for="exploreMetric">
+        Metric
+      </label>
+
+      <select id="exploreMetric">
+
+        <option value="dollars">
+          Total Dollars
+        </option>
+
+        <option value="percent">
+          Percent of Total
+        </option>
+
+        <option value="count">
+          Transaction Count
+        </option>
+
+        <option value="average">
+          Average Transaction
+        </option>
+
+      </select>
+
+    </div>
+
+  </section>
+
+
+  <!-- =========================================
+       EXPLORE SUMMARY
+  ========================================== -->
+
+  <section class="explore-summary-grid">
+
+    <article class="explore-summary-card">
+
+      <span>Total</span>
+
+      <strong id="exploreTotal">
+        $0.00
+      </strong>
+
+    </article>
+
+
+    <article class="explore-summary-card">
+
+      <span>Transactions</span>
+
+      <strong id="exploreCount">
+        0
+      </strong>
+
+    </article>
+
+
+    <article class="explore-summary-card">
+
+      <span>Average</span>
+
+      <strong id="exploreAverage">
+        $0.00
+      </strong>
+
+    </article>
+
+  </section>
+
+
+  <!-- =========================================
+       DYNAMIC CHART
+  ========================================== -->
+
+  <section class="chart-card explore-chart-card">
+
+    <div class="chart-card-header">
+
+      <div>
+        <h2 id="exploreChartTitle">
+          Spending by Month
+        </h2>
+
+        <p id="exploreChartSubtitle">
+          Based on your current filters
+        </p>
+      </div>
+
+    </div>
+
+    <div class="chart-wrapper chart-wrapper-large">
+
+      <canvas
+        id="exploreChart"
+        aria-label="Dynamic explorer chart"
+        role="img"
+      ></canvas>
+
+    </div>
+
+    <div
+      id="exploreChartEmpty"
+      class="chart-empty"
+      hidden
+    >
+      No transactions match these filters.
+    </div>
+
+  </section>
+
+
+  <!-- =========================================
+       MATCHING TRANSACTIONS
+  ========================================== -->
+
+  <section class="overview-card">
+
+    <div class="overview-card-header">
+
+      <div>
+
+        <h2>
+          Matching Transactions
+        </h2>
+
+        <p
+          id="exploreTableDescription"
+          class="selection-description"
+        >
+        </p>
+
+      </div>
+
+    </div>
+
+
+    <div class="explore-table-wrapper">
+
+      <table class="explore-table">
+
+        <thead>
+
+          <tr>
+
+            <th>
+              <button
+                type="button"
+                class="table-sort-btn"
+                data-sort="date"
+              >
+                Date
+              </button>
+            </th>
+
+            <th>Person</th>
+            <th>Category</th>
+            <th>Item</th>
+            <th>Type</th>
+            <th>N/W</th>
+
+            <th>
+              <button
+                type="button"
+                class="table-sort-btn"
+                data-sort="amount"
+              >
+                Amount
+              </button>
+            </th>
+
+          </tr>
+
+        </thead>
+
+        <tbody id="exploreTableBody">
+        </tbody>
+
+      </table>
+
+    </div>
+
+  </section>
+
+</section>
+
+
+
 
 <!------- End of Additions  ------->
 
@@ -836,6 +1329,42 @@ const SUCCESS_DISPLAY_MS = 1500;
  ******************************************************************************/
 
 const elements = {
+    dashboardModeNav: document.getElementById("dashboardModeNav"),
+  showOverviewButton: document.getElementById("showOverviewBtn"),
+  showExploreButton: document.getElementById("showExploreBtn"),
+
+  overviewPanel: document.getElementById("overviewPanel"),
+  explorePanel: document.getElementById("explorePanel"),
+
+  resetExploreButton: document.getElementById("resetExploreBtn"),
+
+  exploreYear: document.getElementById("exploreYear"),
+  explorePeriod: document.getElementById("explorePeriod"),
+  explorePerson: document.getElementById("explorePerson"),
+  exploreCategory: document.getElementById("exploreCategory"),
+  exploreItem: document.getElementById("exploreItem"),
+  exploreType: document.getElementById("exploreType"),
+  exploreNeedWant: document.getElementById("exploreNeedWant"),
+  exploreSearch: document.getElementById("exploreSearch"),
+  exploreBreakdown: document.getElementById("exploreBreakdown"),
+  exploreMetric: document.getElementById("exploreMetric"),
+
+  customDateControls: document.getElementById("customDateControls"),
+  exploreStartDate: document.getElementById("exploreStartDate"),
+  exploreEndDate: document.getElementById("exploreEndDate"),
+
+  exploreTotal: document.getElementById("exploreTotal"),
+  exploreCount: document.getElementById("exploreCount"),
+  exploreAverage: document.getElementById("exploreAverage"),
+
+  exploreChartCanvas: document.getElementById("exploreChart"),
+  exploreChartTitle: document.getElementById("exploreChartTitle"),
+  exploreChartSubtitle: document.getElementById("exploreChartSubtitle"),
+  exploreChartEmpty: document.getElementById("exploreChartEmpty"),
+
+  exploreTableBody: document.getElementById("exploreTableBody"),
+  exploreTableDescription: document.getElementById("exploreTableDescription"),
+
   refreshDashboardButton: document.getElementById("refreshDashboardBtn"),
   dashboardStatus: document.getElementById("dashboardStatus"),
   dashboardFilters: document.getElementById("dashboardFilters"),
@@ -905,6 +1434,14 @@ let moneyFlowChart = null;
 let categoryChart = null;
 let needsWantsChart = null;
 let spendingTrendChart = null;
+
+
+let exploreChart = null;
+
+let exploreSort = {
+  field: "date",
+  direction: "desc"
+};
 
 
 /******************************************************************************
@@ -1016,6 +1553,8 @@ const SUBSCRIPTION_KEYWORDS = [
   "pandora"
 ];
 
+
+
 /******************************************************************************
  * INITIALIZATION
  ******************************************************************************/
@@ -1031,6 +1570,83 @@ function registerEventListeners() {
     "click",
     refreshDashboard
   );
+
+
+  elements.showOverviewButton.addEventListener(
+    "click",
+    showOverviewPanel
+  );
+
+  elements.showExploreButton.addEventListener(
+    "click",
+    showExplorePanel
+  );
+
+  elements.resetExploreButton.addEventListener(
+    "click",
+    resetExploreFilters
+  );
+
+  elements.exploreYear.addEventListener(
+    "change",
+    updateExplorer
+  );
+
+  elements.explorePeriod.addEventListener(
+    "change",
+    handleExplorePeriodChange
+  );
+
+  elements.explorePerson.addEventListener(
+    "change",
+    updateExplorer
+  );
+
+  elements.exploreCategory.addEventListener(
+    "change",
+    handleExploreCategoryChange
+  );
+
+  elements.exploreItem.addEventListener(
+    "change",
+    updateExplorer
+  );
+
+  elements.exploreType.addEventListener(
+    "change",
+    updateExplorer
+  );
+
+  elements.exploreNeedWant.addEventListener(
+    "change",
+    updateExplorer
+  );
+
+  elements.exploreSearch.addEventListener(
+    "input",
+    updateExplorer
+  );
+
+  elements.exploreBreakdown.addEventListener(
+    "change",
+    updateExplorer
+  );
+
+  elements.exploreMetric.addEventListener(
+    "change",
+    updateExplorer
+  );
+
+  elements.exploreStartDate.addEventListener(
+    "change",
+    updateExplorer
+  );
+
+  elements.exploreEndDate.addEventListener(
+    "change",
+    updateExplorer
+  );
+
 
   elements.dashboardYear.addEventListener(
     "change",
@@ -1057,6 +1673,23 @@ function registerEventListeners() {
   elements.form.addEventListener("submit", showPreview);
   elements.editButton.addEventListener("click", returnToForm);
   elements.confirmButton.addEventListener("click", submitTransaction);
+
+
+  document
+    .querySelectorAll(".table-sort-btn")
+    .forEach(button => {
+
+      button.addEventListener(
+        "click",
+        () => {
+          handleExploreTableSort(
+            button.dataset.sort
+          );
+        }
+      );
+
+    });
+
 }
 
 /******************************************************************************
@@ -1200,6 +1833,8 @@ async function loadDashboardData() {
     dashboardDataStale = false;
 
     initializeDashboardFilters();
+    initializeExplorer();
+
 
     elements.dashboardStatus.textContent =
       "Live data loaded.";
@@ -1214,6 +1849,8 @@ async function loadDashboardData() {
 
     elements.dashboardFilters.hidden = false;
     elements.dashboardContent.hidden = false;
+
+    elements.dashboardModeNav.hidden = false;
 
     updateDashboardOverview();
 
@@ -1712,6 +2349,1385 @@ function calculateDashboardTotals(
     wantsPct
   };
 }
+
+
+/******************************************************************************
+ * DASHBOARD MODE NAVIGATION
+ ******************************************************************************/
+
+function showOverviewPanel() {
+
+  elements.overviewPanel.hidden = false;
+  elements.explorePanel.hidden = true;
+
+  elements.showOverviewButton.classList.add("active");
+  elements.showExploreButton.classList.remove("active");
+
+  elements.showOverviewButton.setAttribute(
+    "aria-selected",
+    "true"
+  );
+
+  elements.showExploreButton.setAttribute(
+    "aria-selected",
+    "false"
+  );
+}
+
+
+function showExplorePanel() {
+
+  elements.overviewPanel.hidden = true;
+  elements.explorePanel.hidden = false;
+
+  elements.showOverviewButton.classList.remove("active");
+  elements.showExploreButton.classList.add("active");
+
+  elements.showOverviewButton.setAttribute(
+    "aria-selected",
+    "false"
+  );
+
+  elements.showExploreButton.setAttribute(
+    "aria-selected",
+    "true"
+  );
+
+  updateExplorer();
+}
+
+
+/******************************************************************************
+ * EXPLORER INITIALIZATION
+ ******************************************************************************/
+
+function initializeExplorer() {
+
+  populateExploreYears();
+  populateExploreCategories();
+  populateExploreItems();
+
+  elements.explorePeriod.value = "ytd";
+  elements.explorePerson.value = "All";
+  elements.exploreCategory.value = "All";
+  elements.exploreItem.value = "All";
+  elements.exploreType.value = "All";
+  elements.exploreNeedWant.value = "All";
+
+  elements.exploreBreakdown.value = "month";
+  elements.exploreMetric.value = "dollars";
+
+  elements.exploreSearch.value = "";
+
+  elements.customDateControls.hidden = true;
+
+  updateExplorer();
+}
+
+
+function populateExploreYears() {
+
+  const current =
+    elements.exploreYear.value;
+
+  const years =
+    [
+      ...new Set(
+        dashboardTransactions.map(
+          transaction =>
+            Number(transaction.year)
+        )
+      )
+    ]
+      .filter(Number.isFinite)
+      .sort((a, b) => b - a);
+
+
+  elements.exploreYear.replaceChildren();
+
+
+  years.forEach(year => {
+
+    elements.exploreYear.add(
+      new Option(
+        String(year),
+        String(year)
+      )
+    );
+
+  });
+
+
+  if (
+    current &&
+    years.includes(Number(current))
+  ) {
+
+    elements.exploreYear.value =
+      current;
+
+  } else {
+
+    const thisYear =
+      new Date().getFullYear();
+
+    elements.exploreYear.value =
+      years.includes(thisYear)
+        ? String(thisYear)
+        : String(years[0] || "");
+  }
+}
+
+
+function populateExploreCategories() {
+
+  const categories =
+    [
+      ...new Set(
+        dashboardTransactions
+          .map(
+            transaction =>
+              transaction.category
+          )
+          .filter(Boolean)
+      )
+    ].sort();
+
+
+  elements.exploreCategory.replaceChildren();
+
+  elements.exploreCategory.add(
+    new Option(
+      "All Categories",
+      "All"
+    )
+  );
+
+
+  categories.forEach(category => {
+
+    elements.exploreCategory.add(
+      new Option(
+        formatItemLabel(category),
+        category
+      )
+    );
+
+  });
+}
+
+
+function populateExploreItems() {
+
+  const selectedCategory =
+    elements.exploreCategory.value;
+
+  const currentItem =
+    elements.exploreItem.value;
+
+
+  let source =
+    dashboardTransactions;
+
+
+  if (
+    selectedCategory &&
+    selectedCategory !== "All"
+  ) {
+
+    source =
+      source.filter(
+        transaction =>
+          transaction.category ===
+          selectedCategory
+      );
+  }
+
+
+  const items =
+    [
+      ...new Set(
+        source
+          .map(
+            transaction =>
+              transaction.item
+          )
+          .filter(Boolean)
+      )
+    ].sort();
+
+
+  elements.exploreItem.replaceChildren();
+
+  elements.exploreItem.add(
+    new Option(
+      "All Items",
+      "All"
+    )
+  );
+
+
+  items.forEach(item => {
+
+    elements.exploreItem.add(
+      new Option(
+        formatItemLabel(item),
+        item
+      )
+    );
+
+  });
+
+
+  if (
+    items.includes(currentItem)
+  ) {
+
+    elements.exploreItem.value =
+      currentItem;
+
+  } else {
+
+    elements.exploreItem.value =
+      "All";
+  }
+}
+
+
+function handleExploreCategoryChange() {
+
+  populateExploreItems();
+  updateExplorer();
+}
+
+
+function handleExplorePeriodChange() {
+
+  const isCustom =
+    elements.explorePeriod.value ===
+    "custom";
+
+  elements.customDateControls.hidden =
+    !isCustom;
+
+  updateExplorer();
+}
+
+
+
+/******************************************************************************
+ * EXPLORER FILTERING
+ ******************************************************************************/
+
+function getExplorerTransactions() {
+
+  const selectedYear =
+    Number(
+      elements.exploreYear.value
+    );
+
+  const period =
+    elements.explorePeriod.value;
+
+  const person =
+    elements.explorePerson.value;
+
+  const category =
+    elements.exploreCategory.value;
+
+  const item =
+    elements.exploreItem.value;
+
+  const type =
+    elements.exploreType.value;
+
+  const needWant =
+    elements.exploreNeedWant.value;
+
+  const search =
+    elements.exploreSearch.value
+      .trim()
+      .toLowerCase();
+
+
+  const today =
+    new Date();
+
+
+  const customStart =
+    elements.exploreStartDate.value
+      ? parseApiDate(
+          elements.exploreStartDate.value
+        )
+      : null;
+
+
+  const customEnd =
+    elements.exploreEndDate.value
+      ? endOfToday(
+          parseApiDate(
+            elements.exploreEndDate.value
+          )
+        )
+      : null;
+
+
+  return dashboardTransactions.filter(
+    transaction => {
+
+      const date =
+        parseApiDate(
+          transaction.date
+        );
+
+
+      if (!date) {
+        return false;
+      }
+
+
+      if (
+        transaction.year !==
+        selectedYear
+      ) {
+        return false;
+      }
+
+
+      if (
+        person !== "All" &&
+        transaction.person !== person
+      ) {
+        return false;
+      }
+
+
+      if (
+        category !== "All" &&
+        transaction.category !== category
+      ) {
+        return false;
+      }
+
+
+      if (
+        item !== "All" &&
+        transaction.item !== item
+      ) {
+        return false;
+      }
+
+
+      if (
+        type !== "All" &&
+        transaction.type !== type
+      ) {
+        return false;
+      }
+
+
+      if (
+        needWant !== "All" &&
+        transaction.needWant !==
+          needWant
+      ) {
+        return false;
+      }
+
+
+      if (search) {
+
+        const searchableText =
+          [
+            transaction.category,
+            transaction.item,
+            transaction.notes,
+            transaction.person,
+            transaction.type,
+            transaction.needWant
+          ]
+            .join(" ")
+            .toLowerCase();
+
+
+        if (
+          !searchableText.includes(
+            search
+          )
+        ) {
+          return false;
+        }
+      }
+
+
+      if (period === "ytd") {
+
+        if (
+          selectedYear ===
+            today.getFullYear() &&
+          date > endOfToday(today)
+        ) {
+          return false;
+        }
+
+      }
+
+
+      if (period === "month") {
+
+        if (
+          selectedYear !==
+            today.getFullYear() ||
+          date.getMonth() !==
+            today.getMonth()
+        ) {
+          return false;
+        }
+
+      }
+
+
+      if (period === "week") {
+
+        if (
+          date <
+            getStartOfWeek(today) ||
+          date >
+            getEndOfWeek(today)
+        ) {
+          return false;
+        }
+
+      }
+
+
+      if (period === "custom") {
+
+        if (
+          customStart &&
+          date < customStart
+        ) {
+          return false;
+        }
+
+
+        if (
+          customEnd &&
+          date > customEnd
+        ) {
+          return false;
+        }
+
+      }
+
+
+      return true;
+    }
+  );
+}
+
+
+function getTransactionMetricAmount(
+  transaction
+) {
+
+  /*
+   * For normal expense analysis,
+   * expense is the meaningful value.
+   *
+   * If filtered to Income or Investment,
+   * use that amount instead.
+   */
+
+  if (
+    transaction.type === "income"
+  ) {
+    return Number(
+      transaction.income
+    ) || 0;
+  }
+
+
+  if (
+    transaction.type ===
+    "investment"
+  ) {
+    return Number(
+      transaction.investment
+    ) || 0;
+  }
+
+
+  return Number(
+    transaction.expense
+  ) || 0;
+}
+
+
+/******************************************************************************
+ * EXPLORER UPDATE
+ ******************************************************************************/
+
+function updateExplorer() {
+
+  if (!dashboardLoaded) {
+    return;
+  }
+
+
+  const transactions =
+    getExplorerTransactions();
+
+
+  renderExploreSummary(
+    transactions
+  );
+
+
+  const grouped =
+    groupExplorerTransactions(
+      transactions
+    );
+
+
+  renderExploreChart(
+    grouped,
+    transactions
+  );
+
+
+  renderExploreTable(
+    transactions
+  );
+}
+
+
+
+function renderExploreSummary(
+  transactions
+) {
+
+  const total =
+    transactions.reduce(
+      (sum, transaction) =>
+        sum +
+        getTransactionMetricAmount(
+          transaction
+        ),
+      0
+    );
+
+
+  const count =
+    transactions.length;
+
+
+  const average =
+    count > 0
+      ? total / count
+      : 0;
+
+
+  elements.exploreTotal.textContent =
+    formatCurrency(total);
+
+
+  elements.exploreCount.textContent =
+    String(count);
+
+
+  elements.exploreAverage.textContent =
+    formatCurrency(average);
+}
+
+
+
+/******************************************************************************
+ * EXPLORER GROUPING
+ ******************************************************************************/
+
+function groupExplorerTransactions(
+  transactions
+) {
+
+  const breakdown =
+    elements.exploreBreakdown.value;
+
+
+  const groups =
+    new Map();
+
+
+  transactions.forEach(
+    transaction => {
+
+      const key =
+        getExplorerGroupKey(
+          transaction,
+          breakdown
+        );
+
+
+      if (!groups.has(key)) {
+
+        groups.set(
+          key,
+          {
+            label: key,
+            total: 0,
+            count: 0
+          }
+        );
+      }
+
+
+      const group =
+        groups.get(key);
+
+
+      group.total +=
+        getTransactionMetricAmount(
+          transaction
+        );
+
+
+      group.count += 1;
+    }
+  );
+
+
+  let result =
+    Array.from(
+      groups.values()
+    );
+
+
+  if (
+    breakdown === "month" ||
+    breakdown === "week"
+  ) {
+
+    result.sort(
+      (a, b) =>
+        a.label.localeCompare(
+          b.label
+        )
+    );
+
+  } else {
+
+    result.sort(
+      (a, b) =>
+        b.total - a.total
+    );
+  }
+
+
+  return result;
+}
+
+
+function getExplorerGroupKey(
+  transaction,
+  breakdown
+) {
+
+  switch (breakdown) {
+
+    case "month":
+      return transaction.monthKey;
+
+
+    case "week":
+      return (
+        `${transaction.year}-W` +
+        String(
+          transaction.week
+        ).padStart(2, "0")
+      );
+
+
+    case "category":
+      return (
+        transaction.category ||
+        "Uncategorized"
+      );
+
+
+    case "item":
+      return (
+        transaction.item ||
+        "Uncategorized"
+      );
+
+
+    case "person":
+      return (
+        transaction.person ||
+        "Household"
+      );
+
+
+    case "type":
+      return (
+        transaction.type ||
+        "Other"
+      );
+
+
+    case "needWant":
+      return (
+        transaction.needWant ||
+        "Unclassified"
+      );
+
+
+    default:
+      return "All";
+  }
+}
+
+
+function getExplorerChartValues(
+  groups
+) {
+
+  const metric =
+    elements.exploreMetric.value;
+
+
+  const overallTotal =
+    groups.reduce(
+      (sum, group) =>
+        sum + group.total,
+      0
+    );
+
+
+  return groups.map(
+    group => {
+
+      switch (metric) {
+
+        case "count":
+
+          return group.count;
+
+
+        case "average":
+
+          return group.count
+            ? group.total /
+              group.count
+            : 0;
+
+
+        case "percent":
+
+          return overallTotal
+            ? (
+                group.total /
+                overallTotal
+              ) * 100
+            : 0;
+
+
+        case "dollars":
+        default:
+
+          return group.total;
+      }
+    }
+  );
+}
+
+
+/******************************************************************************
+ *  Pretty Labels
+ ******************************************************************************/
+
+function formatExplorerGroupLabel(
+  label
+) {
+
+  const breakdown =
+    elements.exploreBreakdown.value;
+
+
+  if (
+    breakdown === "month" &&
+    /^\d{4}-\d{2}$/.test(label)
+  ) {
+
+    const [
+      year,
+      month
+    ] =
+      label.split("-")
+        .map(Number);
+
+
+    return new Intl.DateTimeFormat(
+      "en-US",
+      {
+        month: "short"
+      }
+    ).format(
+      new Date(
+        year,
+        month - 1,
+        1
+      )
+    );
+  }
+
+
+  if (breakdown === "week") {
+
+    return label.replace(
+      /^\d{4}-W/,
+      "Week "
+    );
+  }
+
+
+  return formatItemLabel(label);
+}
+
+
+
+/******************************************************************************
+ * EXPLORER CHART
+ ******************************************************************************/
+
+function renderExploreChart(
+  groups,
+  transactions
+) {
+
+  if (exploreChart) {
+    exploreChart.destroy();
+    exploreChart = null;
+  }
+
+
+  if (!groups.length) {
+
+    elements.exploreChartCanvas.hidden =
+      true;
+
+    elements.exploreChartEmpty.hidden =
+      false;
+
+    return;
+  }
+
+
+  elements.exploreChartCanvas.hidden =
+    false;
+
+  elements.exploreChartEmpty.hidden =
+    true;
+
+
+  const breakdown =
+    elements.exploreBreakdown.value;
+
+
+  const metric =
+    elements.exploreMetric.value;
+
+
+  const labels =
+    groups.map(
+      group =>
+        formatExplorerGroupLabel(
+          group.label
+        )
+    );
+
+
+  const values =
+    getExplorerChartValues(
+      groups
+    );
+
+
+  const chronological =
+    breakdown === "month" ||
+    breakdown === "week";
+
+
+  const chartType =
+    chronological
+      ? "line"
+      : "bar";
+
+
+  elements.exploreChartTitle.textContent =
+    buildExplorerChartTitle();
+
+
+  elements.exploreChartSubtitle.textContent =
+    `${transactions.length} matching ${
+      transactions.length === 1
+        ? "transaction"
+        : "transactions"
+    }`;
+
+
+  exploreChart =
+    new Chart(
+      elements.exploreChartCanvas,
+      {
+
+        type: chartType,
+
+
+        data: {
+
+          labels: labels,
+
+          datasets: [
+
+            {
+
+              label:
+                getExplorerMetricLabel(),
+
+              data:
+                values,
+
+              backgroundColor:
+                "#0E6F6B",
+
+              borderColor:
+                "#0E6F6B",
+
+              borderWidth: 2,
+
+              borderRadius: 6,
+
+              tension: 0.3,
+
+              fill:
+                chronological
+                  ? false
+                  : undefined
+
+            }
+
+          ]
+
+        },
+
+
+        options: {
+
+          responsive: true,
+
+          maintainAspectRatio: false,
+
+
+          plugins: {
+
+            legend: {
+              display: false
+            },
+
+
+            tooltip: {
+
+              callbacks: {
+
+                label: context =>
+                  formatExplorerMetricValue(
+                    context.raw,
+                    metric
+                  )
+
+              }
+
+            },
+
+
+            datalabels: {
+              display: false
+            }
+
+          },
+
+
+          scales: {
+
+            y: {
+
+              beginAtZero: true,
+
+              ticks: {
+
+                callback: value =>
+                  formatExplorerAxisValue(
+                    value,
+                    metric
+                  )
+
+              }
+
+            }
+
+          }
+
+        }
+
+      }
+    );
+}
+
+
+function buildExplorerChartTitle() {
+
+  const metric =
+    elements.exploreMetric
+      .selectedOptions[0]
+      ?.textContent
+      .trim() || "";
+
+
+  const breakdown =
+    elements.exploreBreakdown
+      .selectedOptions[0]
+      ?.textContent
+      .trim() || "";
+
+
+  return (
+    `${metric} by ${breakdown}`
+  );
+}
+
+
+function getExplorerMetricLabel() {
+
+  return (
+    elements.exploreMetric
+      .selectedOptions[0]
+      ?.textContent
+      .trim() ||
+    "Value"
+  );
+}
+
+
+function formatExplorerMetricValue(
+  value,
+  metric
+) {
+
+  if (metric === "count") {
+
+    return (
+      `${value} ${
+        value === 1
+          ? "transaction"
+          : "transactions"
+      }`
+    );
+  }
+
+
+  if (metric === "percent") {
+
+    return (
+      Number(value).toFixed(1) +
+      "%"
+    );
+  }
+
+
+  return formatCurrency(value);
+}
+
+
+function formatExplorerAxisValue(
+  value,
+  metric
+) {
+
+  if (metric === "percent") {
+
+    return (
+      Math.round(value) +
+      "%"
+    );
+  }
+
+
+  if (metric === "count") {
+
+    return Math.round(value);
+  }
+
+
+  return new Intl.NumberFormat(
+    "en-US",
+    {
+      style: "currency",
+      currency: "USD",
+      notation: "compact",
+      maximumFractionDigits: 1
+    }
+  ).format(value);
+}
+
+
+
+/******************************************************************************
+ * EXPLORER TRANSACTION TABLE
+ ******************************************************************************/
+
+function renderExploreTable(
+  transactions
+) {
+
+  elements.exploreTableBody
+    .replaceChildren();
+
+
+  const sorted =
+    sortExplorerTransactions(
+      transactions
+    );
+
+
+  elements.exploreTableDescription.textContent =
+    `${transactions.length} matching ${
+      transactions.length === 1
+        ? "transaction"
+        : "transactions"
+    }`;
+
+
+  if (!sorted.length) {
+
+    const row =
+      document.createElement("tr");
+
+
+    const cell =
+      document.createElement("td");
+
+
+    cell.colSpan = 7;
+
+    cell.className =
+      "explore-table-empty";
+
+    cell.textContent =
+      "No matching transactions.";
+
+
+    row.appendChild(cell);
+
+    elements.exploreTableBody
+      .appendChild(row);
+
+    return;
+  }
+
+
+  sorted.forEach(
+    transaction => {
+
+      const row =
+        document.createElement("tr");
+
+
+      const cells = [
+
+        formatShortDate(
+          transaction.date
+        ),
+
+        transaction.person,
+
+        formatItemLabel(
+          transaction.category
+        ),
+
+        formatItemLabel(
+          transaction.item
+        ),
+
+        formatItemLabel(
+          transaction.type
+        ),
+
+        transaction.needWant,
+
+        formatCurrency(
+          transaction.amount
+        )
+
+      ];
+
+
+      cells.forEach(
+        (value, index) => {
+
+          const cell =
+            document.createElement("td");
+
+          cell.textContent =
+            value || "-";
+
+
+          if (index === 6) {
+
+            cell.classList.add(
+              "amount-cell"
+            );
+          }
+
+
+          row.appendChild(cell);
+
+        }
+      );
+
+
+      elements.exploreTableBody
+        .appendChild(row);
+    }
+  );
+}
+
+
+
+
+function handleExploreTableSort(
+  field
+) {
+
+  if (
+    exploreSort.field === field
+  ) {
+
+    exploreSort.direction =
+      exploreSort.direction === "asc"
+        ? "desc"
+        : "asc";
+
+  } else {
+
+    exploreSort.field =
+      field;
+
+    exploreSort.direction =
+      field === "date"
+        ? "desc"
+        : "desc";
+  }
+
+
+  updateExplorer();
+}
+
+
+function sortExplorerTransactions(
+  transactions
+) {
+
+  return [...transactions].sort(
+    (a, b) => {
+
+      let comparison = 0;
+
+
+      if (
+        exploreSort.field ===
+        "amount"
+      ) {
+
+        comparison =
+          Number(a.amount) -
+          Number(b.amount);
+
+      } else {
+
+        comparison =
+          a.date.localeCompare(
+            b.date
+          );
+      }
+
+
+      return (
+        exploreSort.direction === "asc"
+          ? comparison
+          : -comparison
+      );
+    }
+  );
+}
+
+
+
+
+function resetExploreFilters() {
+
+  populateExploreYears();
+
+  elements.explorePeriod.value =
+    "ytd";
+
+  elements.explorePerson.value =
+    "All";
+
+  elements.exploreCategory.value =
+    "All";
+
+  populateExploreItems();
+
+  elements.exploreItem.value =
+    "All";
+
+  elements.exploreType.value =
+    "All";
+
+  elements.exploreNeedWant.value =
+    "All";
+
+  elements.exploreSearch.value =
+    "";
+
+  elements.exploreBreakdown.value =
+    "month";
+
+  elements.exploreMetric.value =
+    "dollars";
+
+  elements.exploreStartDate.value =
+    "";
+
+  elements.exploreEndDate.value =
+    "";
+
+  elements.customDateControls.hidden =
+    true;
+
+
+  exploreSort = {
+    field: "date",
+    direction: "desc"
+  };
+
+
+  updateExplorer();
+}
+
+
+
 
 
 
