@@ -1242,6 +1242,12 @@ style="display:none; margin-top:30px;">
         >
         </p>
 
+
+<p class="table-sort-help">
+  Click a column to sort.
+  Shift+click additional columns for multi-column sorting.
+</p>
+
       </div>
 
     </div>
@@ -1251,39 +1257,108 @@ style="display:none; margin-top:30px;">
 
       <table class="explore-table">
 
-        <thead>
+<thead>
 
-          <tr>
+  <tr>
 
-            <th>
-              <button
-                type="button"
-                class="table-sort-btn"
-                data-sort="date"
-              >
-                Date
-              </button>
-            </th>
+    <th>
+      <button
+        type="button"
+        class="table-sort-btn"
+        data-sort="date"
+      >
+        Date
+        <span class="sort-indicator"></span>
+      </button>
+    </th>
 
-            <th>Person</th>
-            <th>Category</th>
-            <th>Item</th>
-            <th>Type</th>
-            <th>N/W</th>
 
-            <th>
-              <button
-                type="button"
-                class="table-sort-btn"
-                data-sort="amount"
-              >
-                Amount
-              </button>
-            </th>
+    <th>
+      <button
+        type="button"
+        class="table-sort-btn"
+        data-sort="person"
+      >
+        Person
+        <span class="sort-indicator"></span>
+      </button>
+    </th>
 
-          </tr>
 
-        </thead>
+    <th>
+      <button
+        type="button"
+        class="table-sort-btn"
+        data-sort="category"
+      >
+        Category
+        <span class="sort-indicator"></span>
+      </button>
+    </th>
+
+
+    <th>
+      <button
+        type="button"
+        class="table-sort-btn"
+        data-sort="item"
+      >
+        Item
+        <span class="sort-indicator"></span>
+      </button>
+    </th>
+
+
+    <th>
+      <button
+        type="button"
+        class="table-sort-btn"
+        data-sort="type"
+      >
+        Type
+        <span class="sort-indicator"></span>
+      </button>
+    </th>
+
+
+    <th>
+      <button
+        type="button"
+        class="table-sort-btn"
+        data-sort="needWant"
+      >
+        N/W
+        <span class="sort-indicator"></span>
+      </button>
+    </th>
+
+
+    <th>
+      <button
+        type="button"
+        class="table-sort-btn"
+        data-sort="notes"
+      >
+        Notes
+        <span class="sort-indicator"></span>
+      </button>
+    </th>
+
+
+    <th>
+      <button
+        type="button"
+        class="table-sort-btn"
+        data-sort="amount"
+      >
+        Amount
+        <span class="sort-indicator"></span>
+      </button>
+    </th>
+
+  </tr>
+
+</thead>       
 
         <tbody id="exploreTableBody">
         </tbody>
@@ -1438,10 +1513,12 @@ let spendingTrendChart = null;
 
 let exploreChart = null;
 
-let exploreSort = {
-  field: "date",
-  direction: "desc"
-};
+let exploreSorts = [
+  {
+    field: "date",
+    direction: "desc"
+  }
+];
 
 
 /******************************************************************************
@@ -1675,20 +1752,23 @@ function registerEventListeners() {
   elements.confirmButton.addEventListener("click", submitTransaction);
 
 
-  document
-    .querySelectorAll(".table-sort-btn")
-    .forEach(button => {
+document
+  .querySelectorAll(".table-sort-btn")
+  .forEach(button => {
 
-      button.addEventListener(
-        "click",
-        () => {
-          handleExploreTableSort(
-            button.dataset.sort
-          );
-        }
-      );
+    button.addEventListener(
+      "click",
+      event => {
 
-    });
+        handleExploreTableSort(
+          button.dataset.sort,
+          event.shiftKey
+        );
+
+      }
+    );
+
+  });
 
 }
 
@@ -3508,33 +3588,35 @@ function renderExploreTable(
     }`;
 
 
-  if (!sorted.length) {
+ if (!sorted.length) {
 
-    const row =
-      document.createElement("tr");
+  const row =
+    document.createElement("tr");
 
+  const cell =
+    document.createElement("td");
 
-    const cell =
-      document.createElement("td");
+  cell.colSpan = 8;
 
+  cell.className =
+    "explore-table-empty";
 
-    cell.colSpan = 7;
+  cell.textContent =
+    "No matching transactions.";
 
-    cell.className =
-      "explore-table-empty";
+  row.appendChild(cell);
 
-    cell.textContent =
-      "No matching transactions.";
+  elements.exploreTableBody
+    .appendChild(row);
 
+  updateExploreSortIndicators();
 
-    row.appendChild(cell);
+  return;
 
-    elements.exploreTableBody
-      .appendChild(row);
+updateExploreSortIndicators();
+}
 
-    return;
-  }
-
+/*** Check lines above here for potential errors ****/
 
   sorted.forEach(
     transaction => {
@@ -3545,31 +3627,33 @@ function renderExploreTable(
 
       const cells = [
 
-        formatShortDate(
-          transaction.date
-        ),
+  formatShortDate(
+    transaction.date
+  ),
 
-        transaction.person,
+  transaction.person,
 
-        formatItemLabel(
-          transaction.category
-        ),
+  formatItemLabel(
+    transaction.category
+  ),
 
-        formatItemLabel(
-          transaction.item
-        ),
+  formatItemLabel(
+    transaction.item
+  ),
 
-        formatItemLabel(
-          transaction.type
-        ),
+  formatItemLabel(
+    transaction.type
+  ),
 
-        transaction.needWant,
+  transaction.needWant,
 
-        formatCurrency(
-          transaction.amount
-        )
+  transaction.notes || "-",
 
-      ];
+  formatCurrency(
+    transaction.amount
+  )
+
+];
 
 
       cells.forEach(
@@ -3582,7 +3666,16 @@ function renderExploreTable(
             value || "-";
 
 
-          if (index === 6) {
+	if (index === 6) {
+
+ 	 cell.classList.add(
+    	"notes-cell"
+  	);
+	}
+
+
+
+          if (index === 7) {
 
             cell.classList.add(
               "amount-cell"
@@ -3606,8 +3699,118 @@ function renderExploreTable(
 
 
 function handleExploreTableSort(
+  field,
+  addToExisting = false
+) {
+
+  /*
+   * Find whether this column is already
+   * participating in the sort.
+   */
+  const existingIndex =
+    exploreSorts.findIndex(
+      sort =>
+        sort.field === field
+    );
+
+
+  /*
+   * Normal click:
+   *
+   * Use only this column.
+   */
+  if (!addToExisting) {
+
+    if (
+      existingIndex === 0 &&
+      exploreSorts.length === 1
+    ) {
+
+      /*
+       * Clicking the currently-active
+       * sole column toggles direction.
+       */
+      exploreSorts[0].direction =
+        exploreSorts[0].direction ===
+        "asc"
+          ? "desc"
+          : "asc";
+
+    } else {
+
+      exploreSorts = [
+        {
+          field: field,
+          direction:
+            getDefaultSortDirection(
+              field
+            )
+        }
+      ];
+
+    }
+
+  } else {
+
+    /*
+     * Shift + click:
+     *
+     * Add this field as an additional
+     * sorting level.
+     */
+
+    if (existingIndex >= 0) {
+
+      /*
+       * Already part of sorting:
+       * toggle its direction.
+       */
+      exploreSorts[
+        existingIndex
+      ].direction =
+        exploreSorts[
+          existingIndex
+        ].direction === "asc"
+          ? "desc"
+          : "asc";
+
+    } else {
+
+      exploreSorts.push({
+        field: field,
+        direction:
+          getDefaultSortDirection(
+            field
+          )
+      });
+
+    }
+  }
+
+
+  updateExploreSortIndicators();
+
+  renderExploreTable(
+    getExplorerTransactions()
+  );
+}
+
+
+function getDefaultSortDirection(
   field
 ) {
+
+  if (
+    field === "date" ||
+    field === "amount"
+  ) {
+    return "desc";
+  }
+
+  return "asc";
+}
+
+
 
   if (
     exploreSort.field === field
@@ -3641,35 +3844,177 @@ function sortExplorerTransactions(
   return [...transactions].sort(
     (a, b) => {
 
-      let comparison = 0;
-
-
-      if (
-        exploreSort.field ===
-        "amount"
+      /*
+       * Process sorting rules in order.
+       *
+       * Rule 1 gets highest priority,
+       * then Rule 2, etc.
+       */
+      for (
+        const sort of exploreSorts
       ) {
 
-        comparison =
-          Number(a.amount) -
-          Number(b.amount);
-
-      } else {
-
-        comparison =
-          a.date.localeCompare(
-            b.date
+        const comparison =
+          compareExplorerValues(
+            a,
+            b,
+            sort.field
           );
+
+
+        if (comparison !== 0) {
+
+          return (
+            sort.direction === "asc"
+              ? comparison
+              : -comparison
+          );
+        }
       }
 
 
-      return (
-        exploreSort.direction === "asc"
-          ? comparison
-          : -comparison
-      );
+      return 0;
     }
   );
 }
+
+
+
+function compareExplorerValues(
+  a,
+  b,
+  field
+) {
+
+  /*
+   * Dates are stored YYYY-MM-DD,
+   * so lexical comparison works.
+   */
+  if (field === "date") {
+
+    return String(
+      a.date || ""
+    ).localeCompare(
+      String(
+        b.date || ""
+      )
+    );
+  }
+
+
+  /*
+   * Amount requires numeric sorting.
+   */
+  if (field === "amount") {
+
+    return (
+      Number(a.amount || 0) -
+      Number(b.amount || 0)
+    );
+  }
+
+
+  /*
+   * Everything else is textual.
+   */
+  const aValue =
+    String(
+      a[field] || ""
+    )
+      .trim()
+      .toLowerCase();
+
+
+  const bValue =
+    String(
+      b[field] || ""
+    )
+      .trim()
+      .toLowerCase();
+
+
+  return aValue.localeCompare(
+    bValue,
+    undefined,
+    {
+      numeric: true,
+      sensitivity: "base"
+    }
+  );
+}
+
+
+
+function updateExploreSortIndicators() {
+
+  document
+    .querySelectorAll(
+      ".table-sort-btn"
+    )
+    .forEach(button => {
+
+      const indicator =
+        button.querySelector(
+          ".sort-indicator"
+        );
+
+
+      if (!indicator) {
+        return;
+      }
+
+
+      const index =
+        exploreSorts.findIndex(
+          sort =>
+            sort.field ===
+            button.dataset.sort
+        );
+
+
+      if (index === -1) {
+
+        indicator.textContent =
+          "";
+
+        button.classList.remove(
+          "sort-active"
+        );
+
+        return;
+      }
+
+
+      const sort =
+        exploreSorts[index];
+
+
+      const arrow =
+        sort.direction === "asc"
+          ? "↑"
+          : "↓";
+
+
+      /*
+       * Example:
+       *
+       * Date 1↓
+       * Category 2↑
+       * Amount 3↓
+       */
+      indicator.textContent =
+        `${index + 1}${arrow}`;
+
+
+      button.classList.add(
+        "sort-active"
+      );
+    });
+}
+
+
+
+
 
 
 
@@ -3717,10 +4062,12 @@ function resetExploreFilters() {
     true;
 
 
-  exploreSort = {
+exploreSorts = [
+  {
     field: "date",
     direction: "desc"
-  };
+  }
+];
 
 
   updateExplorer();
