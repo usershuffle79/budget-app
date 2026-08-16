@@ -784,6 +784,67 @@ form button,
 }
 
 
+/* =========================================================
+   EXPLORER DRILL-DOWN
+========================================================= */
+
+.explore-drilldown {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+
+  gap: 8px;
+
+  margin: -10px 0 20px;
+}
+
+
+.explore-drilldown[hidden] {
+  display: none !important;
+}
+
+
+.explore-drilldown-label {
+  color: #777;
+
+  font-size: 12px;
+  font-weight: 600;
+}
+
+
+.explore-drilldown-chip {
+  display: inline-flex;
+  align-items: center;
+
+  width: auto;
+
+  gap: 7px;
+
+  padding: 7px 10px;
+
+  border: 1px solid
+    rgba(175, 133, 53, 0.28);
+
+  border-radius: 999px;
+
+  background:
+    rgba(175, 133, 53, 0.10);
+
+  color: #6f531f;
+
+  font-size: 12px;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+
+.explore-drilldown-chip:hover {
+  background:
+    rgba(175, 133, 53, 0.17);
+}
+
+
 /* ---------- KPI GRID ---------- */
 
 .kpi-grid {
