@@ -2074,6 +2074,9 @@ function setConfirmButtonState(disabled) {
   elements.confirmButton.textContent = disabled ? "Saving..." : "Confirm";
 }
 
+
+
+
 function showSuccessMessage() {
 
   /*
@@ -2092,10 +2095,10 @@ function showSuccessMessage() {
     SUCCESS_DISPLAY_MS
   );
 }
-  subtleVibrate();
 
-  window.setTimeout(resetFormAfterSuccess, SUCCESS_DISPLAY_MS);
-}
+
+
+
 
 function resetFormAfterSuccess() {
   elements.form.reset();
