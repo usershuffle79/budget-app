@@ -1267,6 +1267,49 @@ style="display:none; margin-top:30px;">
 
 
   <!-- =========================================
+       PERIOD COMPARISON
+  ========================================== -->
+
+  <section
+    id="exploreComparisonCard"
+    class="explore-comparison-card"
+  >
+    <div class="explore-comparison-heading">
+      <div>
+        <span class="explore-comparison-eyebrow">Period comparison</span>
+        <h3 id="exploreComparisonTitle">Current vs. previous period</h3>
+      </div>
+
+      <span
+        id="exploreComparisonChange"
+        class="explore-comparison-change neutral"
+      >
+        --
+      </span>
+    </div>
+
+    <div class="explore-comparison-values">
+      <div>
+        <span id="exploreComparisonCurrentLabel">Current</span>
+        <strong id="exploreComparisonCurrent">$0.00</strong>
+      </div>
+
+      <div>
+        <span id="exploreComparisonPreviousLabel">Previous</span>
+        <strong id="exploreComparisonPrevious">$0.00</strong>
+      </div>
+    </div>
+
+    <p
+      id="exploreComparisonNote"
+      class="explore-comparison-note"
+    >
+      Compares total dollars using the current Explorer filters.
+    </p>
+  </section>
+
+
+  <!-- =========================================
        DYNAMIC CHART
   ========================================== -->
 
@@ -1562,6 +1605,15 @@ exploreFilterChips:
   exploreTotal: document.getElementById("exploreTotal"),
   exploreCount: document.getElementById("exploreCount"),
   exploreAverage: document.getElementById("exploreAverage"),
+
+  exploreComparisonCard: document.getElementById("exploreComparisonCard"),
+  exploreComparisonTitle: document.getElementById("exploreComparisonTitle"),
+  exploreComparisonChange: document.getElementById("exploreComparisonChange"),
+  exploreComparisonCurrentLabel: document.getElementById("exploreComparisonCurrentLabel"),
+  exploreComparisonCurrent: document.getElementById("exploreComparisonCurrent"),
+  exploreComparisonPreviousLabel: document.getElementById("exploreComparisonPreviousLabel"),
+  exploreComparisonPrevious: document.getElementById("exploreComparisonPrevious"),
+  exploreComparisonNote: document.getElementById("exploreComparisonNote"),
 
   exploreChartCanvas: document.getElementById("exploreChart"),
   exploreChartTitle: document.getElementById("exploreChartTitle"),
@@ -3327,6 +3379,10 @@ function updateExplorer() {
     transactions
   );
 
+  renderExploreComparison(
+    transactions
+  );
+
 
   const grouped =
     groupExplorerTransactions(
@@ -3384,6 +3440,431 @@ function renderExploreSummary(
     formatCurrency(average);
 }
 
+
+/******************************************************************************
+ * EXPLORER PERIOD COMPARISON
+ ******************************************************************************/
+
+function renderExploreComparison(currentTransactions) {
+
+  const comparison =
+    getExplorerComparisonData(
+      currentTransactions
+    );
+
+  if (!comparison.available) {
+    elements.exploreComparisonTitle.textContent =
+      comparison.title || "Period comparison";
+    elements.exploreComparisonCurrentLabel.textContent =
+      comparison.currentLabel || "Current";
+    elements.exploreComparisonPreviousLabel.textContent =
+      comparison.previousLabel || "Previous";
+    elements.exploreComparisonCurrent.textContent = "—";
+    elements.exploreComparisonPrevious.textContent = "—";
+    elements.exploreComparisonChange.textContent = "—";
+    elements.exploreComparisonChange.className =
+      "explore-comparison-change neutral";
+    elements.exploreComparisonNote.textContent =
+      comparison.note ||
+      "Choose a complete period to compare it with the previous equivalent period.";
+    return;
+  }
+
+  elements.exploreComparisonTitle.textContent = comparison.title;
+  elements.exploreComparisonCurrentLabel.textContent = comparison.currentLabel;
+  elements.exploreComparisonPreviousLabel.textContent = comparison.previousLabel;
+  elements.exploreComparisonCurrent.textContent =
+    formatCurrency(comparison.currentTotal);
+  elements.exploreComparisonPrevious.textContent =
+    formatCurrency(comparison.previousTotal);
+
+  const delta =
+    comparison.currentTotal -
+    comparison.previousTotal;
+
+  let percentChange = null;
+
+  if (comparison.previousTotal !== 0) {
+    percentChange =
+      delta / comparison.previousTotal;
+  }
+
+  const directionClass =
+    delta > 0
+      ? "increase"
+      : delta < 0
+        ? "decrease"
+        : "neutral";
+
+  const sign = delta > 0 ? "+" : "";
+
+  const percentText =
+    percentChange === null
+      ? ""
+      : ` (${sign}${(percentChange * 100).toFixed(1)}%)`;
+
+  elements.exploreComparisonChange.textContent =
+    `${sign}${formatCurrency(delta)}${percentText}`;
+
+  elements.exploreComparisonChange.className =
+    `explore-comparison-change ${directionClass}`;
+
+  elements.exploreComparisonNote.textContent =
+    comparison.note;
+}
+
+
+function getExplorerComparisonData(currentTransactions) {
+
+  const bounds =
+    getExplorerComparisonBounds();
+
+  if (!bounds.available) {
+    return bounds;
+  }
+
+  const previousTransactions =
+    dashboardTransactions.filter(
+      transaction => {
+
+        if (!matchesExplorerNonPeriodFilters(transaction)) {
+          return false;
+        }
+
+        const date =
+          parseApiDate(transaction.date);
+
+        if (!date) {
+          return false;
+        }
+
+        return (
+          date >= bounds.previousStart &&
+          date <= bounds.previousEnd
+        );
+      }
+    );
+
+  const currentTotal =
+    currentTransactions.reduce(
+      (sum, transaction) =>
+        sum + getTransactionMetricAmount(transaction),
+      0
+    );
+
+  const previousTotal =
+    previousTransactions.reduce(
+      (sum, transaction) =>
+        sum + getTransactionMetricAmount(transaction),
+      0
+    );
+
+  return {
+    ...bounds,
+    currentTotal,
+    previousTotal,
+    available: true
+  };
+}
+
+
+function matchesExplorerNonPeriodFilters(transaction) {
+
+  const person = elements.explorePerson.value;
+  const category = elements.exploreCategory.value;
+  const item = elements.exploreItem.value;
+  const type = elements.exploreType.value;
+  const needWant = elements.exploreNeedWant.value;
+  const search =
+    elements.exploreSearch.value
+      .trim()
+      .toLowerCase();
+
+  if (
+    person !== "All" &&
+    transaction.person !== person
+  ) {
+    return false;
+  }
+
+  if (
+    category !== "All" &&
+    transaction.category !== category
+  ) {
+    return false;
+  }
+
+  if (
+    item !== "All" &&
+    transaction.item !== item
+  ) {
+    return false;
+  }
+
+  if (
+    type !== "All" &&
+    transaction.type !== type
+  ) {
+    return false;
+  }
+
+  if (
+    needWant !== "All" &&
+    transaction.needWant !== needWant
+  ) {
+    return false;
+  }
+
+  if (search) {
+    const searchableText =
+      [
+        transaction.category,
+        transaction.item,
+        transaction.notes,
+        transaction.person,
+        transaction.type,
+        transaction.needWant
+      ]
+        .join(" ")
+        .toLowerCase();
+
+    if (!searchableText.includes(search)) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+
+function getExplorerComparisonBounds() {
+
+  const period = elements.explorePeriod.value;
+  const selectedYear = Number(elements.exploreYear.value);
+  const today = new Date();
+
+  if (period === "month") {
+    const selectedMonth = Number(elements.exploreMonth.value);
+    const currentStart = new Date(selectedYear, selectedMonth - 1, 1);
+    const currentEnd = endOfDay(new Date(selectedYear, selectedMonth, 0));
+    const previousStart = new Date(selectedYear, selectedMonth - 2, 1);
+    const previousEnd = endOfDay(new Date(selectedYear, selectedMonth - 1, 0));
+
+    return {
+      available: true,
+      title: "Month-over-month",
+      currentLabel: formatMonthYear(currentStart),
+      previousLabel: formatMonthYear(previousStart),
+      currentStart,
+      currentEnd,
+      previousStart,
+      previousEnd,
+      note: "Compares total dollars for the selected month with the immediately previous calendar month, using the same filters."
+    };
+  }
+
+  if (period === "week") {
+    const selectedWeek = Number(elements.exploreWeek.value);
+
+    if (!selectedWeek) {
+      return {
+        available: false,
+        title: "Week-over-week",
+        note: "Select a week to enable comparison."
+      };
+    }
+
+    const currentStart = getIsoWeekStart(selectedYear, selectedWeek);
+    const currentEnd = endOfDay(addDays(currentStart, 6));
+    const previousStart = addDays(currentStart, -7);
+    const previousEnd = endOfDay(addDays(currentStart, -1));
+
+    return {
+      available: true,
+      title: "Week-over-week",
+      currentLabel: formatDateRange(currentStart, currentEnd),
+      previousLabel: formatDateRange(previousStart, previousEnd),
+      currentStart,
+      currentEnd,
+      previousStart,
+      previousEnd,
+      note: "Compares total dollars for the selected ISO week with the immediately previous seven-day week, using the same filters."
+    };
+  }
+
+  if (period === "custom") {
+    const currentStart = elements.exploreStartDate.value
+      ? parseApiDate(elements.exploreStartDate.value)
+      : null;
+    const rawEnd = elements.exploreEndDate.value
+      ? parseApiDate(elements.exploreEndDate.value)
+      : null;
+
+    if (!currentStart || !rawEnd) {
+      return {
+        available: false,
+        title: "Custom-range comparison",
+        currentLabel: "Selected range",
+        previousLabel: "Previous range",
+        note: "Enter both a start and end date to compare a custom range with the immediately preceding range of equal length."
+      };
+    }
+
+    const currentEnd = endOfDay(rawEnd);
+
+    if (currentEnd < currentStart) {
+      return {
+        available: false,
+        title: "Custom-range comparison",
+        note: "The custom end date must be on or after the start date."
+      };
+    }
+
+    const dayCount =
+      Math.floor(
+        (startOfDay(currentEnd) - startOfDay(currentStart)) /
+        86400000
+      ) + 1;
+
+    const previousEnd = endOfDay(addDays(currentStart, -1));
+    const previousStart = addDays(startOfDay(previousEnd), -(dayCount - 1));
+
+    return {
+      available: true,
+      title: "Custom-range comparison",
+      currentLabel: formatDateRange(currentStart, currentEnd),
+      previousLabel: formatDateRange(previousStart, previousEnd),
+      currentStart,
+      currentEnd,
+      previousStart,
+      previousEnd,
+      note: "Compares total dollars with the immediately preceding date range of equal length, using the same filters."
+    };
+  }
+
+  if (period === "fullYear") {
+    const currentStart = new Date(selectedYear, 0, 1);
+    const currentEnd = endOfDay(new Date(selectedYear, 11, 31));
+    const previousStart = new Date(selectedYear - 1, 0, 1);
+    const previousEnd = endOfDay(new Date(selectedYear - 1, 11, 31));
+
+    return {
+      available: true,
+      title: "Year-over-year",
+      currentLabel: String(selectedYear),
+      previousLabel: String(selectedYear - 1),
+      currentStart,
+      currentEnd,
+      previousStart,
+      previousEnd,
+      note: "Compares total dollars for the selected full year with the prior full year, using the same filters."
+    };
+  }
+
+  /* YTD */
+  const currentStart = new Date(selectedYear, 0, 1);
+  let currentEnd;
+  let previousEnd;
+
+  if (selectedYear === today.getFullYear()) {
+    currentEnd = endOfToday(today);
+    previousEnd = endOfDay(
+      new Date(
+        selectedYear - 1,
+        today.getMonth(),
+        Math.min(
+          today.getDate(),
+          daysInMonth(selectedYear - 1, today.getMonth())
+        )
+      )
+    );
+  } else {
+    currentEnd = endOfDay(new Date(selectedYear, 11, 31));
+    previousEnd = endOfDay(new Date(selectedYear - 1, 11, 31));
+  }
+
+  const previousStart = new Date(selectedYear - 1, 0, 1);
+
+  return {
+    available: true,
+    title: selectedYear === today.getFullYear()
+      ? "YTD vs. prior-year YTD"
+      : "Year-over-year",
+    currentLabel: selectedYear === today.getFullYear()
+      ? `${selectedYear} YTD`
+      : String(selectedYear),
+    previousLabel: selectedYear === today.getFullYear()
+      ? `${selectedYear - 1} YTD`
+      : String(selectedYear - 1),
+    currentStart,
+    currentEnd,
+    previousStart,
+    previousEnd,
+    note: selectedYear === today.getFullYear()
+      ? "Compares total dollars through today's date with the same year-to-date span one year earlier, using the same filters."
+      : "For a prior year, YTD follows the app's existing full-year behavior and compares with the prior full year."
+  };
+}
+
+
+function addDays(date, days) {
+  const result = new Date(date);
+  result.setDate(result.getDate() + days);
+  return result;
+}
+
+
+function startOfDay(date) {
+  const result = new Date(date);
+  result.setHours(0, 0, 0, 0);
+  return result;
+}
+
+
+function endOfDay(date) {
+  const result = new Date(date);
+  result.setHours(23, 59, 59, 999);
+  return result;
+}
+
+
+function getIsoWeekStart(year, week) {
+  const januaryFourth = new Date(year, 0, 4);
+  const day = januaryFourth.getDay() || 7;
+  const firstMonday = new Date(januaryFourth);
+  firstMonday.setDate(januaryFourth.getDate() - day + 1);
+  return addDays(firstMonday, (week - 1) * 7);
+}
+
+
+function daysInMonth(year, zeroBasedMonth) {
+  return new Date(year, zeroBasedMonth + 1, 0).getDate();
+}
+
+
+function formatMonthYear(date) {
+  return new Intl.DateTimeFormat(
+    "en-US",
+    {
+      month: "long",
+      year: "numeric"
+    }
+  ).format(date);
+}
+
+
+function formatDateRange(start, end) {
+  const formatter = new Intl.DateTimeFormat(
+    "en-US",
+    {
+      month: "short",
+      day: "numeric",
+      year: "numeric"
+    }
+  );
+
+  return `${formatter.format(start)} – ${formatter.format(end)}`;
+}
 
 
 /******************************************************************************
