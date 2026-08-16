@@ -109,48 +109,335 @@ form button,
   animation: fadeIn 0.2s ease-in-out;
 }
 
-/* ---------- DASHBOARD PLACEHOLDER ---------- */
+/* ---------- DASHBOARD Styling  ---------- */
 
-.dashboard-placeholder {
-  max-width: 420px;
-  margin: auto;
 
-  background: white;
+/* =========================================================
+   DASHBOARD
+========================================================= */
 
-  padding: 28px 20px;
-
-  border-radius: 16px;
-
-  box-shadow:
-    0 8px 30px rgba(0, 0, 0, 0.08);
-
-  text-align: center;
+.dashboard-shell {
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
 }
 
-.dashboard-placeholder h1 {
-  margin-top: 0;
-}
 
-.dashboard-placeholder p {
-  margin-bottom: 24px;
-  color: #555;
-}
+/* ---------- HEADER ---------- */
 
-.dashboard-status {
+.dashboard-header {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
 
-  gap: 8px;
+  gap: 20px;
 
-  padding: 12px;
+  margin-bottom: 16px;
+}
 
-  background: #f4f4f4;
+.dashboard-header h1 {
+  margin: 0;
+  text-align: left;
+}
+
+.dashboard-subtitle {
+  margin: 4px 0 0;
+
+  color: #666;
+
+  font-size: 0.95rem;
+}
+
+
+.refresh-btn {
+  width: auto;
+
+  padding: 9px 14px;
+
+  border: none;
+  border-radius: 9px;
+
+  background: #ffffff;
+
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.08);
+
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.refresh-btn:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+
+/* ---------- LOADING STATUS ---------- */
+
+.dashboard-load-status {
+  margin-bottom: 18px;
+
+  padding: 12px 14px;
 
   border-radius: 10px;
 
+  background: #eeeeee;
+
+  color: #555;
+
   font-size: 14px;
 }
+
+.dashboard-load-status.success {
+  background: #edf7ef;
+  color: #256b35;
+}
+
+.dashboard-load-status.error {
+  background: #faeeee;
+  color: #9b3030;
+}
+
+
+/* ---------- FILTERS ---------- */
+
+.dashboard-filters {
+  display: grid;
+
+  grid-template-columns:
+    repeat(3, minmax(0, 1fr));
+
+  gap: 12px;
+
+  margin-bottom: 24px;
+}
+
+
+.filter-group {
+  min-width: 0;
+}
+
+
+.filter-group label {
+  display: block;
+
+  margin-bottom: 5px;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  color: #555;
+}
+
+
+.filter-group select {
+  width: 100%;
+
+  min-height: 42px;
+
+  padding: 8px;
+
+  border: 1px solid #d8d8d8;
+  border-radius: 9px;
+
+  background: white;
+
+  font-size: 15px;
+}
+
+
+/* ---------- KPI GRID ---------- */
+
+.kpi-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(3, minmax(0, 1fr));
+
+  gap: 14px;
+
+  margin-bottom: 24px;
+}
+
+
+.kpi-card {
+  display: flex;
+  flex-direction: column;
+
+  min-width: 0;
+
+  padding: 18px;
+
+  background: white;
+
+  border-radius: 14px;
+
+  box-shadow:
+    0 5px 18px rgba(0, 0, 0, 0.07);
+}
+
+
+.kpi-label {
+  margin-bottom: 8px;
+
+  color: #666;
+
+  font-size: 13px;
+  font-weight: 600;
+}
+
+
+.kpi-value {
+  font-size:
+    clamp(1.25rem, 3vw, 1.7rem);
+
+  line-height: 1.2;
+
+  overflow-wrap: anywhere;
+}
+
+
+.kpi-value-small {
+  font-size:
+    clamp(1.05rem, 2.5vw, 1.4rem);
+}
+
+
+.kpi-value.negative {
+  color: #b33a3a;
+}
+
+
+/* ---------- GENERAL OVERVIEW CARDS ---------- */
+
+.overview-card {
+  margin-bottom: 18px;
+
+  padding: 20px;
+
+  background: white;
+
+  border-radius: 14px;
+
+  box-shadow:
+    0 5px 18px rgba(0, 0, 0, 0.07);
+}
+
+
+.overview-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  gap: 15px;
+}
+
+
+.overview-card h2 {
+  margin:
+    0 0 4px;
+
+  font-size: 1.1rem;
+}
+
+
+.selection-description {
+  margin: 0;
+
+  color: #777;
+
+  font-size: 14px;
+}
+
+
+.transaction-count {
+  flex-shrink: 0;
+
+  padding: 5px 9px;
+
+  border-radius: 999px;
+
+  background: #f0f0f0;
+
+  color: #555;
+
+  font-size: 12px;
+  font-weight: 600;
+}
+
+
+/* ---------- RECENT TRANSACTIONS ---------- */
+
+.recent-transactions {
+  margin-top: 16px;
+}
+
+
+.recent-transaction {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 15px;
+
+  padding: 13px 0;
+
+  border-bottom:
+    1px solid #eeeeee;
+}
+
+
+.recent-transaction:last-child {
+  border-bottom: none;
+}
+
+
+.recent-transaction-details {
+  display: flex;
+  flex-direction: column;
+
+  min-width: 0;
+}
+
+
+.recent-transaction-title {
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  font-size: 15px;
+}
+
+
+.recent-transaction-meta {
+  margin-top: 3px;
+
+  color: #777;
+
+  font-size: 12px;
+}
+
+
+.recent-transaction-amount {
+  flex-shrink: 0;
+
+  font-size: 15px;
+}
+
+
+.empty-state {
+  margin: 20px 0 4px;
+
+  text-align: center;
+
+  color: #777;
+
+  font-size: 14px;
+}
+
 
 .status-dot {
   width: 10px;
@@ -233,5 +520,48 @@ button.secondary {
   to { opacity: 1; transform: translateY(0); }
 }
 
+
+
+/* =========================================================
+   DASHBOARD MOBILE
+========================================================= */
+
+@media (max-width: 700px) {
+
+  .dashboard-header {
+    align-items: flex-start;
+  }
+
+
+  .dashboard-filters {
+    grid-template-columns: 1fr;
+  }
+
+
+  .kpi-grid {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+
+
+  .kpi-card {
+    padding: 15px;
+  }
+
+
+  .overview-card {
+    padding: 16px;
+  }
+
+}
+
+
+@media (max-width: 400px) {
+
+  .kpi-grid {
+    grid-template-columns: 1fr;
+  }
+
+}
 
 
