@@ -1191,6 +1191,35 @@ style="display:none; margin-top:30px;">
 </section>
 
 
+<!-- =========================================
+     CHART DRILL-DOWN
+========================================== -->
+
+<section
+  id="exploreDrilldown"
+  class="explore-drilldown"
+  hidden
+>
+  <span class="explore-drilldown-label">
+    Drilled into
+  </span>
+
+  <button
+    type="button"
+    id="clearExploreDrilldown"
+    class="explore-drilldown-chip"
+  >
+    <span id="exploreDrilldownText"></span>
+
+    <span
+      class="filter-chip-remove"
+      aria-hidden="true"
+    >
+      ×
+    </span>
+  </button>
+</section>
+
 
   <!-- =========================================
        EXPLORE SUMMARY
@@ -1476,6 +1505,21 @@ const elements = {
   exploreBreakdown: document.getElementById("exploreBreakdown"),
   exploreMetric: document.getElementById("exploreMetric"),
 
+exploreDrilldown:
+  document.getElementById(
+    "exploreDrilldown"
+  ),
+
+clearExploreDrilldown:
+  document.getElementById(
+    "clearExploreDrilldown"
+  ),
+
+exploreDrilldownText:
+  document.getElementById(
+    "exploreDrilldownText"
+  ),
+
 exploreMonthGroup:
   document.getElementById(
     "exploreMonthGroup"
@@ -1593,6 +1637,8 @@ let exploreSorts = [
 ];
 
 
+let exploreChart = null;
+
 /******************************************************************************
  * CHART CONFIGURATION
  ******************************************************************************/
@@ -1703,6 +1749,98 @@ const SUBSCRIPTION_KEYWORDS = [
 ];
 
 
+/******************************************************************************
+ * EXPLORER CHART DRILL-DOWN
+ ******************************************************************************/
+
+function setExploreDrilldown(
+  breakdown,
+  key,
+  label
+) {
+
+  exploreDrilldown = {
+    breakdown: breakdown,
+    key: key,
+    label: label
+  };
+
+
+  renderExploreDrilldown();
+
+  renderExploreTable(
+    getDrilledExplorerTransactions()
+  );
+}
+
+
+function clearExploreDrilldown() {
+
+  exploreDrilldown = null;
+
+  renderExploreDrilldown();
+
+  renderExploreTable(
+    getExplorerTransactions()
+  );
+}
+
+
+function renderExploreDrilldown() {
+
+  if (!exploreDrilldown) {
+
+    elements.exploreDrilldown.hidden =
+      true;
+
+    elements.exploreDrilldownText.textContent =
+      "";
+
+    return;
+  }
+
+
+  elements.exploreDrilldown.hidden =
+    false;
+
+  elements.exploreDrilldownText.textContent =
+    exploreDrilldown.label;
+}
+
+
+/******************************************************************************
+ * Drill-Down Filtering Function
+ ******************************************************************************/
+
+function getDrilledExplorerTransactions() {
+
+  const transactions =
+    getExplorerTransactions();
+
+
+  if (!exploreDrilldown) {
+    return transactions;
+  }
+
+
+  return transactions.filter(
+    transaction => {
+
+      const key =
+        getExplorerGroupKey(
+          transaction,
+          exploreDrilldown.breakdown
+        );
+
+
+      return (
+        key ===
+        exploreDrilldown.key
+      );
+    }
+  );
+}
+
 
 /******************************************************************************
  * INITIALIZATION
@@ -1719,6 +1857,12 @@ function registerEventListeners() {
     "click",
     refreshDashboard
   );
+
+
+elements.clearExploreDrilldown.addEventListener(
+  "click",
+  clearExploreDrilldown
+);
 
 
 elements.exploreMonth.addEventListener(
@@ -3108,6 +3252,15 @@ function updateExplorer() {
     return;
   }
 
+/*
+ * A normal filter/control change invalidates
+ * any temporary chart drill-down.
+ */
+exploreDrilldown = null;
+
+renderExploreDrilldown();
+
+
 
   const transactions =
     getExplorerTransactions();
@@ -3562,6 +3715,58 @@ function renderExploreChart(
 
           maintainAspectRatio: false,
 
+onClick: (
+  event,
+  activeElements
+) => {
+
+  if (!activeElements.length) {
+    return;
+  }
+
+
+  const dataIndex =
+    activeElements[0].index;
+
+
+  const group =
+    groups[dataIndex];
+
+
+  if (!group) {
+    return;
+  }
+
+
+  setExploreDrilldown(
+    breakdown,
+    group.label,
+    formatExplorerGroupLabel(
+      group.label
+    )
+  );
+},
+
+
+onHover: (
+  event,
+  activeElements
+) => {
+
+  const canvas =
+    event.native?.target;
+
+
+  if (!canvas) {
+    return;
+  }
+
+
+  canvas.style.cursor =
+    activeElements.length
+      ? "pointer"
+      : "default";
+},
 
           plugins: {
 
@@ -3942,11 +4147,11 @@ function handleExploreTableSort(
   }
 
 
-  updateExploreSortIndicators();
+ updateExploreSortIndicators();
 
-  renderExploreTable(
-    getExplorerTransactions()
-  );
+renderExploreTable(
+  getDrilledExplorerTransactions()
+);
 }
 
 
