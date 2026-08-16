@@ -622,6 +622,94 @@ form button,
 }
 
 
+/* =========================================================
+   EXPLORER ACTIVE FILTERS
+========================================================= */
+
+.explore-active-filters {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+
+  gap: 9px;
+
+  margin: -4px 0 20px;
+}
+
+
+.explore-active-filters[hidden] {
+  display: none !important;
+}
+
+
+.active-filters-label {
+  margin-right: 2px;
+
+  color: #777;
+
+  font-size: 12px;
+  font-weight: 600;
+}
+
+
+.explore-filter-chips {
+  display: flex;
+  flex-wrap: wrap;
+
+  gap: 7px;
+}
+
+
+.explore-filter-chip {
+  display: inline-flex;
+  align-items: center;
+
+  width: auto;
+
+  gap: 7px;
+
+  padding: 7px 10px;
+
+  border: 1px solid
+    rgba(14, 111, 107, 0.18);
+
+  border-radius: 999px;
+
+  background:
+    rgba(14, 111, 107, 0.08);
+
+  color: #0A4F52;
+
+  font-size: 12px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease;
+}
+
+
+.explore-filter-chip:hover {
+  background:
+    rgba(14, 111, 107, 0.14);
+
+  border-color:
+    rgba(14, 111, 107, 0.3);
+}
+
+
+.filter-chip-remove {
+  color: #0E6F6B;
+
+  font-size: 16px;
+  font-weight: 700;
+
+  line-height: 1;
+}
+
+
 /* ---------- LOADING STATUS ---------- */
 
 .dashboard-load-status {
@@ -976,6 +1064,20 @@ button.secondary {
 
 @media (max-width: 700px) {
 
+
+.explore-active-filters {
+  align-items: flex-start;
+}
+
+
+.active-filters-label {
+  width: 100%;
+}
+
+
+.explore-filter-chip {
+  padding: 7px 9px;
+}
 
   .explore-controls {
     grid-template-columns:
