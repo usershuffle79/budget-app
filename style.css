@@ -1218,3 +1218,16 @@ button.secondary {
 }
 
 
+
+
+/* ---------- EXPLORER CHART INTERACTION ---------- */
+.explore-chart-card canvas {
+  touch-action: manipulation;
+}
+
+.explore-drilldown-chip:focus-visible,
+.explore-filter-chip:focus-visible,
+.table-sort-btn:focus-visible {
+  outline: 2px solid #0E6F6B;
+  outline-offset: 2px;
+}
