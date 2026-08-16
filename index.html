@@ -3812,30 +3812,6 @@ function getDefaultSortDirection(
 
 
 
-  if (
-    exploreSort.field === field
-  ) {
-
-    exploreSort.direction =
-      exploreSort.direction === "asc"
-        ? "desc"
-        : "asc";
-
-  } else {
-
-    exploreSort.field =
-      field;
-
-    exploreSort.direction =
-      field === "date"
-        ? "desc"
-        : "desc";
-  }
-
-
-  updateExplorer();
-}
-
 
 function sortExplorerTransactions(
   transactions
