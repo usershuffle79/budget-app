@@ -344,24 +344,303 @@ style="display:none; margin-top:30px;">
   hidden
 >
 
-  <div class="dashboard-placeholder">
+  <div class="dashboard-shell">
 
-    <h1>Dashboard</h1>
+    <!-- =========================================
+         DASHBOARD HEADER
+    ========================================== -->
 
-    <p>
-      Your live financial dashboard will appear here.
-    </p>
+    <section class="dashboard-header">
 
-    <div class="dashboard-status">
-      <span
-        class="status-dot"
-        aria-hidden="true"
-      ></span>
+      <div>
+        <h1>Dashboard</h1>
 
-      <span>
-        Dashboard API connected and ready.
-      </span>
+        <p class="dashboard-subtitle">
+          Live financial overview
+        </p>
+      </div>
+
+      <button
+        type="button"
+        id="refreshDashboardBtn"
+        class="refresh-btn"
+      >
+        ↻ Refresh
+      </button>
+
+    </section>
+
+
+    <!-- =========================================
+         DASHBOARD STATUS
+    ========================================== -->
+
+    <div
+      id="dashboardStatus"
+      class="dashboard-load-status"
+      role="status"
+      aria-live="polite"
+    >
+      Dashboard has not been loaded yet.
     </div>
+
+
+    <!-- =========================================
+         OVERVIEW FILTERS
+    ========================================== -->
+
+    <section
+      id="dashboardFilters"
+      class="dashboard-filters"
+      hidden
+    >
+
+      <div class="filter-group">
+
+        <label for="dashboardYear">
+          Year
+        </label>
+
+        <select id="dashboardYear">
+        </select>
+
+      </div>
+
+
+      <div class="filter-group">
+
+        <label for="dashboardPeriod">
+          Period
+        </label>
+
+        <select id="dashboardPeriod">
+
+          <option value="ytd">
+            Year to Date
+          </option>
+
+          <option value="month">
+            This Month
+          </option>
+
+          <option value="week">
+            This Week
+          </option>
+
+          <option value="fullYear">
+            Full Year
+          </option>
+
+        </select>
+
+      </div>
+
+
+      <div class="filter-group">
+
+        <label for="dashboardPerson">
+          Person
+        </label>
+
+        <select id="dashboardPerson">
+
+          <option value="All">
+            All
+          </option>
+
+          <option value="Household">
+            Household
+          </option>
+
+          <option value="Lauren">
+            Lauren
+          </option>
+
+          <option value="Sam">
+            Sam
+          </option>
+
+        </select>
+
+      </div>
+
+    </section>
+
+
+    <!-- =========================================
+         KPI CARDS
+    ========================================== -->
+
+    <section
+      id="dashboardContent"
+      class="dashboard-content"
+      hidden
+    >
+
+      <div class="kpi-grid">
+
+        <article class="kpi-card">
+
+          <span class="kpi-label">
+            Income
+          </span>
+
+          <strong
+            id="kpiIncome"
+            class="kpi-value"
+          >
+            $0.00
+          </strong>
+
+        </article>
+
+
+        <article class="kpi-card">
+
+          <span class="kpi-label">
+            Expenses
+          </span>
+
+          <strong
+            id="kpiExpenses"
+            class="kpi-value"
+          >
+            $0.00
+          </strong>
+
+        </article>
+
+
+        <article class="kpi-card">
+
+          <span class="kpi-label">
+            Investments
+          </span>
+
+          <strong
+            id="kpiInvestments"
+            class="kpi-value"
+          >
+            $0.00
+          </strong>
+
+        </article>
+
+
+        <article class="kpi-card">
+
+          <span class="kpi-label">
+            Remaining
+          </span>
+
+          <strong
+            id="kpiRemaining"
+            class="kpi-value"
+          >
+            $0.00
+          </strong>
+
+        </article>
+
+
+        <article class="kpi-card">
+
+          <span class="kpi-label">
+            Savings Rate
+          </span>
+
+          <strong
+            id="kpiSavingsRate"
+            class="kpi-value"
+          >
+            0.0%
+          </strong>
+
+        </article>
+
+
+        <article class="kpi-card">
+
+          <span class="kpi-label">
+            Needs / Wants
+          </span>
+
+          <strong
+            id="kpiNeedsWants"
+            class="kpi-value kpi-value-small"
+          >
+            -- / --
+          </strong>
+
+        </article>
+
+      </div>
+
+
+      <!-- =========================================
+           PERIOD SUMMARY
+      ========================================== -->
+
+      <section class="overview-card">
+
+        <div class="overview-card-header">
+
+          <div>
+
+            <h2>
+              Current Selection
+            </h2>
+
+            <p
+              id="selectionDescription"
+              class="selection-description"
+            >
+            </p>
+
+          </div>
+
+          <span
+            id="transactionCount"
+            class="transaction-count"
+          >
+          </span>
+
+        </div>
+
+      </section>
+
+
+      <!-- =========================================
+           RECENT TRANSACTIONS
+      ========================================== -->
+
+      <section class="overview-card">
+
+        <div class="overview-card-header">
+
+          <div>
+
+            <h2>
+              Recent Transactions
+            </h2>
+
+            <p class="selection-description">
+              Most recent matching activity
+            </p>
+
+          </div>
+
+        </div>
+
+        <div
+          id="recentTransactions"
+          class="recent-transactions"
+        >
+        </div>
+
+      </section>
+
+    </section>
 
   </div>
 
@@ -396,6 +675,26 @@ const SUCCESS_DISPLAY_MS = 1500;
  ******************************************************************************/
 
 const elements = {
+  refreshDashboardButton: document.getElementById("refreshDashboardBtn"),
+  dashboardStatus: document.getElementById("dashboardStatus"),
+  dashboardFilters: document.getElementById("dashboardFilters"),
+  dashboardContent: document.getElementById("dashboardContent"),
+
+  dashboardYear: document.getElementById("dashboardYear"),
+  dashboardPeriod: document.getElementById("dashboardPeriod"),
+  dashboardPerson: document.getElementById("dashboardPerson"),
+
+  kpiIncome: document.getElementById("kpiIncome"),
+  kpiExpenses: document.getElementById("kpiExpenses"),
+  kpiInvestments: document.getElementById("kpiInvestments"),
+  kpiRemaining: document.getElementById("kpiRemaining"),
+  kpiSavingsRate: document.getElementById("kpiSavingsRate"),
+  kpiNeedsWants: document.getElementById("kpiNeedsWants"),
+
+  selectionDescription: document.getElementById("selectionDescription"),
+  transactionCount: document.getElementById("transactionCount"),
+  recentTransactions: document.getElementById("recentTransactions"),
+
   formView: document.getElementById("formView"),
   dashboardView: document.getElementById("dashboardView"),
   showFormButton: document.getElementById("showFormBtn"),
@@ -421,6 +720,17 @@ const elements = {
 
 let pendingFormData = null;
 let isSubmitting = false;
+
+
+/******  Added: Info about Fetching, Dupes, etc. [8/16/2026 ]******/
+let dashboardTransactions = [];
+let dashboardMetadata = null;
+
+let dashboardLoaded = false;
+let dashboardLoading = false;
+let dashboardDataStale = true;
+
+/*********************************************************/
 
 /******************************************************************************
  * MASTER DATA MODEL
@@ -530,6 +840,26 @@ function initializeForm() {
 }
 
 function registerEventListeners() {
+  elements.refreshDashboardButton.addEventListener(
+    "click",
+    refreshDashboard
+  );
+
+  elements.dashboardYear.addEventListener(
+    "change",
+    updateDashboardOverview
+  );
+
+  elements.dashboardPeriod.addEventListener(
+    "change",
+    updateDashboardOverview
+  );
+
+  elements.dashboardPerson.addEventListener(
+    "change",
+    updateDashboardOverview
+  );
+
   elements.showFormButton.addEventListener("click", showFormView);
   elements.showDashboardButton.addEventListener("click", showDashboardView);
 
@@ -568,6 +898,41 @@ function showFormView() {
 }
 
 
+async function showDashboardView() {
+
+  elements.formView.hidden = true;
+  elements.dashboardView.hidden = false;
+
+  elements.formView.classList.remove("active-view");
+  elements.dashboardView.classList.add("active-view");
+
+  elements.showFormButton.classList.remove("active");
+  elements.showDashboardButton.classList.add("active");
+
+  elements.showFormButton.setAttribute(
+    "aria-selected",
+    "false"
+  );
+
+  elements.showDashboardButton.setAttribute(
+    "aria-selected",
+    "true"
+  );
+
+  /*
+   * Fetch from Google Sheets only if:
+   *
+   * 1. dashboard hasn't loaded before
+   * OR
+   * 2. a new transaction has been submitted
+   */
+  if (!dashboardLoaded || dashboardDataStale) {
+    await loadDashboardData();
+  }
+}
+
+
+/**  CAN DELETE [8/16/2026]
 function showDashboardView() {
   elements.formView.hidden = true;
   elements.dashboardView.hidden = false;
@@ -588,6 +953,856 @@ function showDashboardView() {
     "true"
   );
 }
+**/
+
+
+/******************************************************************************
+ * DASHBOARD DATA
+ ******************************************************************************/
+
+async function loadDashboardData() {
+
+  if (dashboardLoading) return;
+
+  dashboardLoading = true;
+
+  showDashboardLoading();
+
+  try {
+
+    const dashboardUrl =
+      `${SCRIPT_URL}?action=dashboard`;
+
+    const response = await fetch(
+      dashboardUrl,
+      {
+        method: "GET",
+        cache: "no-store"
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(
+        `Dashboard request failed with status ${response.status}.`
+      );
+    }
+
+    const result =
+      await readJsonResponse(response);
+
+    if (result.status !== "success") {
+      throw new Error(
+        result.message ||
+        "Dashboard data could not be loaded."
+      );
+    }
+
+    if (!Array.isArray(result.transactions)) {
+      throw new Error(
+        "Dashboard API returned an invalid transaction list."
+      );
+    }
+
+    dashboardTransactions =
+      result.transactions;
+
+    dashboardMetadata =
+      result.metadata || {};
+
+    dashboardLoaded = true;
+    dashboardDataStale = false;
+
+    initializeDashboardFilters();
+
+    elements.dashboardStatus.textContent =
+      "Live data loaded.";
+
+    elements.dashboardStatus.classList.remove(
+      "error"
+    );
+
+    elements.dashboardStatus.classList.add(
+      "success"
+    );
+
+    elements.dashboardFilters.hidden = false;
+    elements.dashboardContent.hidden = false;
+
+    updateDashboardOverview();
+
+  } catch (error) {
+
+    console.error(
+      "Dashboard loading failed:",
+      error
+    );
+
+    showDashboardError(
+      error.message
+    );
+
+  } finally {
+
+    dashboardLoading = false;
+
+    elements.refreshDashboardButton.disabled =
+      false;
+
+    elements.refreshDashboardButton.textContent =
+      "↻ Refresh";
+  }
+}
+
+
+async function refreshDashboard() {
+
+  dashboardDataStale = true;
+
+  await loadDashboardData();
+}
+
+
+function showDashboardLoading() {
+
+  elements.dashboardStatus.textContent =
+    "Loading live financial data...";
+
+  elements.dashboardStatus.classList.remove(
+    "success",
+    "error"
+  );
+
+  elements.dashboardFilters.hidden = true;
+  elements.dashboardContent.hidden = true;
+
+  elements.refreshDashboardButton.disabled =
+    true;
+
+  elements.refreshDashboardButton.textContent =
+    "Refreshing...";
+}
+
+
+function showDashboardError(message) {
+
+  elements.dashboardStatus.textContent =
+    `Unable to load dashboard. ${message}`;
+
+  elements.dashboardStatus.classList.remove(
+    "success"
+  );
+
+  elements.dashboardStatus.classList.add(
+    "error"
+  );
+
+  elements.dashboardFilters.hidden = true;
+  elements.dashboardContent.hidden = true;
+}
+
+
+/******************************************************************************
+ * DASHBOARD FILTER SETUP
+ ******************************************************************************/
+
+function initializeDashboardFilters() {
+
+  const currentSelection =
+    elements.dashboardYear.value;
+
+  let years = [];
+
+  if (
+    dashboardMetadata &&
+    Array.isArray(
+      dashboardMetadata.availableYears
+    )
+  ) {
+
+    years =
+      dashboardMetadata.availableYears;
+
+  } else {
+
+    years =
+      [
+        ...new Set(
+          dashboardTransactions.map(
+            transaction =>
+              Number(transaction.year)
+          )
+        )
+      ];
+
+  }
+
+  years =
+    years
+      .filter(Number.isFinite)
+      .sort((a, b) => b - a);
+
+  elements.dashboardYear.replaceChildren();
+
+  years.forEach(year => {
+
+    const option =
+      new Option(
+        String(year),
+        String(year)
+      );
+
+    elements.dashboardYear.add(option);
+  });
+
+
+  /*
+   * Preserve selected year on refresh if possible.
+   */
+  if (
+    currentSelection &&
+    years.includes(
+      Number(currentSelection)
+    )
+  ) {
+
+    elements.dashboardYear.value =
+      currentSelection;
+
+  } else {
+
+    const currentYear =
+      new Date().getFullYear();
+
+    if (years.includes(currentYear)) {
+
+      elements.dashboardYear.value =
+        String(currentYear);
+
+    } else if (years.length) {
+
+      elements.dashboardYear.value =
+        String(years[0]);
+    }
+  }
+}
+
+
+/******************************************************************************
+ * DASHBOARD FILTERING
+ ******************************************************************************/
+
+function getFilteredDashboardTransactions() {
+
+  const selectedYear =
+    Number(elements.dashboardYear.value);
+
+  const selectedPeriod =
+    elements.dashboardPeriod.value;
+
+  const selectedPerson =
+    elements.dashboardPerson.value;
+
+  const today =
+    new Date();
+
+  return dashboardTransactions.filter(
+    transaction => {
+
+      const transactionDate =
+        parseApiDate(transaction.date);
+
+      if (!transactionDate) {
+        return false;
+      }
+
+      /*
+       * YEAR
+       */
+      if (
+        transaction.year !== selectedYear
+      ) {
+        return false;
+      }
+
+
+      /*
+       * PERSON
+       */
+      if (
+        selectedPerson !== "All" &&
+        transaction.person !== selectedPerson
+      ) {
+        return false;
+      }
+
+
+      /*
+       * PERIOD
+       */
+
+      if (selectedPeriod === "ytd") {
+
+        /*
+         * For the current year:
+         * don't include future transactions.
+         *
+         * For a prior year:
+         * YTD effectively becomes the whole year.
+         */
+        if (
+          selectedYear === today.getFullYear() &&
+          transactionDate > endOfToday(today)
+        ) {
+          return false;
+        }
+
+      }
+
+
+      if (selectedPeriod === "month") {
+
+        if (
+          selectedYear !== today.getFullYear() ||
+          transactionDate.getMonth() !== today.getMonth()
+        ) {
+          return false;
+        }
+      }
+
+
+      if (selectedPeriod === "week") {
+
+        const start =
+          getStartOfWeek(today);
+
+        const end =
+          getEndOfWeek(today);
+
+        if (
+          transactionDate < start ||
+          transactionDate > end
+        ) {
+          return false;
+        }
+      }
+
+
+      /*
+       * fullYear requires no additional filtering.
+       */
+
+      return true;
+    }
+  );
+}
+
+
+/******************************************************************************
+ * DASHBOARD DATE HELPERS
+ ******************************************************************************/
+
+function parseApiDate(dateString) {
+
+  const match =
+    /^(\d{4})-(\d{2})-(\d{2})$/
+      .exec(String(dateString || ""));
+
+  if (!match) {
+    return null;
+  }
+
+  const date =
+    new Date(
+      Number(match[1]),
+      Number(match[2]) - 1,
+      Number(match[3])
+    );
+
+  if (isNaN(date.getTime())) {
+    return null;
+  }
+
+  return date;
+}
+
+
+function endOfToday(date) {
+
+  const result =
+    new Date(date);
+
+  result.setHours(
+    23,
+    59,
+    59,
+    999
+  );
+
+  return result;
+}
+
+
+function getStartOfWeek(date) {
+
+  const result =
+    new Date(date);
+
+  const day =
+    result.getDay();
+
+  /*
+   * Monday = first day of week.
+   */
+  const difference =
+    day === 0
+      ? -6
+      : 1 - day;
+
+  result.setDate(
+    result.getDate() +
+    difference
+  );
+
+  result.setHours(
+    0,
+    0,
+    0,
+    0
+  );
+
+  return result;
+}
+
+
+function getEndOfWeek(date) {
+
+  const result =
+    getStartOfWeek(date);
+
+  result.setDate(
+    result.getDate() + 6
+  );
+
+  result.setHours(
+    23,
+    59,
+    59,
+    999
+  );
+
+  return result;
+}
+
+
+/******************************************************************************
+ * DASHBOARD OVERVIEW
+ ******************************************************************************/
+
+function updateDashboardOverview() {
+
+  if (!dashboardLoaded) {
+    return;
+  }
+
+  const filtered =
+    getFilteredDashboardTransactions();
+
+  const totals =
+    calculateDashboardTotals(filtered);
+
+  renderDashboardKpis(totals);
+
+  renderSelectionSummary(
+    filtered
+  );
+
+  renderRecentTransactions(
+    filtered
+  );
+}
+
+
+function calculateDashboardTotals(
+  transactions
+) {
+
+  let income = 0;
+  let expenses = 0;
+  let investments = 0;
+
+  let needs = 0;
+  let wants = 0;
+  let unclassified = 0;
+
+
+  transactions.forEach(
+    transaction => {
+
+      income +=
+        Number(transaction.income) || 0;
+
+      expenses +=
+        Number(transaction.expense) || 0;
+
+      investments +=
+        Number(transaction.investment) || 0;
+
+
+      /*
+       * Needs/Wants should describe spending,
+       * not income or investments.
+       */
+      const expense =
+        Number(transaction.expense) || 0;
+
+      if (expense > 0) {
+
+        if (
+          transaction.needWant === "Need"
+        ) {
+
+          needs += expense;
+
+        } else if (
+          transaction.needWant === "Want"
+        ) {
+
+          wants += expense;
+
+        } else {
+
+          unclassified += expense;
+        }
+      }
+    }
+  );
+
+
+  const remaining =
+    income -
+    expenses -
+    investments;
+
+
+  const savingsRate =
+    income > 0
+      ? investments / income
+      : 0;
+
+
+  const classifiedSpending =
+    needs + wants;
+
+
+  const needsPct =
+    classifiedSpending > 0
+      ? needs / classifiedSpending
+      : 0;
+
+
+  const wantsPct =
+    classifiedSpending > 0
+      ? wants / classifiedSpending
+      : 0;
+
+
+  return {
+    income,
+    expenses,
+    investments,
+    remaining,
+    savingsRate,
+    needs,
+    wants,
+    unclassified,
+    needsPct,
+    wantsPct
+  };
+}
+
+
+/********************************************************
+* Render the KPIS 
+********************************************************/
+
+
+function renderDashboardKpis(totals) {
+
+  elements.kpiIncome.textContent =
+    formatCurrency(totals.income);
+
+  elements.kpiExpenses.textContent =
+    formatCurrency(totals.expenses);
+
+  elements.kpiInvestments.textContent =
+    formatCurrency(totals.investments);
+
+  elements.kpiRemaining.textContent =
+    formatCurrency(totals.remaining);
+
+  elements.kpiSavingsRate.textContent =
+    formatPercent(
+      totals.savingsRate
+    );
+
+  if (
+    totals.needs +
+    totals.wants >
+    0
+  ) {
+
+    elements.kpiNeedsWants.textContent =
+      `${formatPercent(totals.needsPct)} / ${formatPercent(totals.wantsPct)}`;
+
+  } else {
+
+    elements.kpiNeedsWants.textContent =
+      "-- / --";
+  }
+
+
+  elements.kpiRemaining.classList.toggle(
+    "negative",
+    totals.remaining < 0
+  );
+}
+
+
+function formatPercent(value) {
+
+  return (
+    Number(value || 0) * 100
+  ).toFixed(1) + "%";
+}
+
+/***************************************************************************
+* Add Selection Summary
+***************************************************************************/
+
+function renderSelectionSummary(
+  transactions
+) {
+
+  const year =
+    elements.dashboardYear.value;
+
+  const period =
+    elements.dashboardPeriod
+      .selectedOptions[0]
+      ?.textContent
+      .trim() || "";
+
+  const person =
+    elements.dashboardPerson.value;
+
+
+  elements.selectionDescription.textContent =
+    `${period} · ${year} · ${person}`;
+
+
+  const count =
+    transactions.length;
+
+
+  elements.transactionCount.textContent =
+    `${count} ${
+      count === 1
+        ? "transaction"
+        : "transactions"
+    }`;
+}
+
+
+/******************************************************************************
+ * RECENT TRANSACTIONS
+ ******************************************************************************/
+
+function renderRecentTransactions(
+  transactions
+) {
+
+  elements.recentTransactions
+    .replaceChildren();
+
+
+  /*
+   * API already returns newest first,
+   * but sort again defensively.
+   */
+  const recent =
+    [...transactions]
+      .sort(
+        (a, b) =>
+          b.date.localeCompare(a.date)
+      )
+      .slice(0, 8);
+
+
+  if (!recent.length) {
+
+    const empty =
+      document.createElement("p");
+
+    empty.className =
+      "empty-state";
+
+    empty.textContent =
+      "No transactions match this selection.";
+
+    elements.recentTransactions
+      .appendChild(empty);
+
+    return;
+  }
+
+
+  recent.forEach(
+    transaction => {
+
+      const row =
+        document.createElement("div");
+
+      row.className =
+        "recent-transaction";
+
+
+      const details =
+        document.createElement("div");
+
+      details.className =
+        "recent-transaction-details";
+
+
+      const title =
+        document.createElement("strong");
+
+      title.className =
+        "recent-transaction-title";
+
+      title.textContent =
+        formatItemLabel(
+          transaction.item
+        );
+
+
+      const meta =
+        document.createElement("span");
+
+      meta.className =
+        "recent-transaction-meta";
+
+      meta.textContent =
+        buildTransactionMeta(
+          transaction
+        );
+
+
+      details.append(
+        title,
+        meta
+      );
+
+
+      const amount =
+        document.createElement("strong");
+
+      amount.className =
+        "recent-transaction-amount";
+
+      amount.textContent =
+        formatCurrency(
+          transaction.amount
+        );
+
+
+      row.append(
+        details,
+        amount
+      );
+
+
+      elements.recentTransactions
+        .appendChild(row);
+    }
+  );
+}
+
+
+function buildTransactionMeta(
+  transaction
+) {
+
+  const pieces = [
+    formatShortDate(
+      transaction.date
+    ),
+
+    capitalizeWords(
+      transaction.category
+    )
+  ];
+
+
+  if (transaction.person) {
+    pieces.push(
+      transaction.person
+    );
+  }
+
+
+  if (transaction.needWant) {
+    pieces.push(
+      transaction.needWant
+    );
+  }
+
+
+  return pieces.join(" · ");
+}
+
+
+function formatShortDate(
+  dateString
+) {
+
+  const date =
+    parseApiDate(dateString);
+
+  if (!date) {
+    return "";
+  }
+
+  return new Intl.DateTimeFormat(
+    "en-US",
+    {
+      month: "short",
+      day: "numeric"
+    }
+  ).format(date);
+}
+
+
+function formatItemLabel(value) {
+
+  return String(value || "")
+    .split(/[-/]/)
+    .map(capitalizeWords)
+    .join(" / ");
+}
+
+
+function capitalizeWords(value) {
+
+  return String(value || "")
+    .replace(
+      /\b\w/g,
+      character =>
+        character.toUpperCase()
+    );
+}
+
+
+
 
 
 /******************************************************************************
@@ -860,8 +2075,23 @@ function setConfirmButtonState(disabled) {
 }
 
 function showSuccessMessage() {
+
+  /*
+   * A transaction was just written to Google Sheets.
+   * Dashboard should fetch fresh data next time it opens.
+   */
+  dashboardDataStale = true;
+
   elements.previewContainer.style.display = "none";
   elements.success.style.display = "block";
+
+  subtleVibrate();
+
+  window.setTimeout(
+    resetFormAfterSuccess,
+    SUCCESS_DISPLAY_MS
+  );
+}
   subtleVibrate();
 
   window.setTimeout(resetFormAfterSuccess, SUCCESS_DISPLAY_MS);
