@@ -19,6 +19,12 @@ Created to provide updates, revisions, and Need/Want
 
 <link rel="stylesheet" href="style.css">
 
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<!-- Chart.js Data Labels -->
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+
 </head>
 
 <body>
@@ -574,7 +580,161 @@ style="display:none; margin-top:30px;">
 
         </article>
 
+<!-- =========================================
+     OVERVIEW CHARTS
+========================================== -->
+
+<section class="dashboard-chart-grid">
+
+  <!-- Monthly Money Flow -->
+
+  <article class="chart-card chart-card-wide">
+
+    <div class="chart-card-header">
+
+      <div>
+        <h2>Monthly Money Flow</h2>
+
+        <p>
+          How income is divided between spending,
+          investments, and remaining income
+        </p>
       </div>
+
+    </div>
+
+    <div class="chart-wrapper chart-wrapper-large">
+
+      <canvas
+        id="moneyFlowChart"
+        aria-label="Monthly money flow chart"
+        role="img"
+      ></canvas>
+
+    </div>
+
+    <div
+      id="moneyFlowEmpty"
+      class="chart-empty"
+      hidden
+    >
+      No income data is available for this selection.
+    </div>
+
+  </article>
+
+
+  <!-- Spending By Category -->
+
+  <article class="chart-card">
+
+    <div class="chart-card-header">
+
+      <div>
+        <h2>Spending by Category</h2>
+
+        <p>
+          Where your expense dollars are going
+        </p>
+      </div>
+
+    </div>
+
+    <div class="chart-wrapper">
+
+      <canvas
+        id="categoryChart"
+        aria-label="Spending by category chart"
+        role="img"
+      ></canvas>
+
+    </div>
+
+    <div
+      id="categoryChartEmpty"
+      class="chart-empty"
+      hidden
+    >
+      No expense data is available for this selection.
+    </div>
+
+  </article>
+
+
+  <!-- Needs vs Wants -->
+
+  <article class="chart-card">
+
+    <div class="chart-card-header">
+
+      <div>
+        <h2>Needs vs. Wants</h2>
+
+        <p>
+          How classified expenses are divided
+        </p>
+      </div>
+
+    </div>
+
+    <div class="chart-wrapper">
+
+      <canvas
+        id="needsWantsChart"
+        aria-label="Needs versus wants chart"
+        role="img"
+      ></canvas>
+
+    </div>
+
+    <div
+      id="needsWantsEmpty"
+      class="chart-empty"
+      hidden
+    >
+      No expense data is available for this selection.
+    </div>
+
+  </article>
+
+
+  <!-- Spending Trend -->
+
+  <article class="chart-card chart-card-wide">
+
+    <div class="chart-card-header">
+
+      <div>
+        <h2>Spending Trend</h2>
+
+        <p>
+          Expense totals over time
+        </p>
+      </div>
+
+    </div>
+
+    <div class="chart-wrapper chart-wrapper-large">
+
+      <canvas
+        id="spendingTrendChart"
+        aria-label="Monthly spending trend chart"
+        role="img"
+      ></canvas>
+
+    </div>
+
+    <div
+      id="spendingTrendEmpty"
+      class="chart-empty"
+      hidden
+    >
+      No expense data is available for this selection.
+    </div>
+
+  </article>
+
+</section>
 
 
       <!-- =========================================
@@ -670,6 +830,7 @@ const SCRIPT_URL =
 
 const SUCCESS_DISPLAY_MS = 1500;
 
+
 /******************************************************************************
  * DOM ELEMENTS
  ******************************************************************************/
@@ -690,6 +851,16 @@ const elements = {
   kpiRemaining: document.getElementById("kpiRemaining"),
   kpiSavingsRate: document.getElementById("kpiSavingsRate"),
   kpiNeedsWants: document.getElementById("kpiNeedsWants"),
+
+    moneyFlowCanvas: document.getElementById("moneyFlowChart"),
+    categoryCanvas: document.getElementById("categoryChart"),
+    needsWantsCanvas: document.getElementById("needsWantsChart"),
+    spendingTrendCanvas: document.getElementById("spendingTrendChart"),
+
+    moneyFlowEmpty: document.getElementById("moneyFlowEmpty"),
+    categoryChartEmpty: document.getElementById("categoryChartEmpty"),
+    needsWantsEmpty: document.getElementById("needsWantsEmpty"),
+    spendingTrendEmpty: document.getElementById("spendingTrendEmpty"),
 
   selectionDescription: document.getElementById("selectionDescription"),
   transactionCount: document.getElementById("transactionCount"),
@@ -722,7 +893,7 @@ let pendingFormData = null;
 let isSubmitting = false;
 
 
-/******  Added: Info about Fetching, Dupes, etc. [8/16/2026 ]******/
+/******  Added: Chart State Variables = Info about Fetching, Dupes, etc. [8/16/2026 ]******/
 let dashboardTransactions = [];
 let dashboardMetadata = null;
 
@@ -730,7 +901,23 @@ let dashboardLoaded = false;
 let dashboardLoading = false;
 let dashboardDataStale = true;
 
-/*********************************************************/
+let moneyFlowChart = null;
+let categoryChart = null;
+let needsWantsChart = null;
+let spendingTrendChart = null;
+
+
+/******************************************************************************
+ * CHART CONFIGURATION
+ ******************************************************************************/
+
+if (
+  typeof Chart !== "undefined" &&
+  typeof ChartDataLabels !== "undefined"
+) {
+  Chart.register(ChartDataLabels);
+}
+
 
 /******************************************************************************
  * MASTER DATA MODEL
@@ -1412,6 +1599,11 @@ function updateDashboardOverview() {
 
   renderDashboardKpis(totals);
 
+  renderOverviewCharts(
+    filtered,
+    totals
+  );
+
   renderSelectionSummary(
     filtered
   );
@@ -1420,6 +1612,7 @@ function updateDashboardOverview() {
     filtered
   );
 }
+
 
 
 function calculateDashboardTotals(
@@ -1519,6 +1712,1122 @@ function calculateDashboardTotals(
     wantsPct
   };
 }
+
+
+
+/******************************************************************************
+ * OVERVIEW CHARTS
+ ******************************************************************************/
+
+function renderOverviewCharts(
+  transactions,
+  totals
+) {
+
+  renderMoneyFlowChart(
+    transactions
+  );
+
+  renderCategoryChart(
+    transactions
+  );
+
+  renderNeedsWantsChart(
+    totals
+  );
+
+  renderSpendingTrendChart(
+    transactions
+  );
+}
+
+
+function aggregateTransactionsByMonth(
+  transactions
+) {
+
+  const months = new Map();
+
+
+  transactions.forEach(
+    transaction => {
+
+      const key =
+        transaction.monthKey;
+
+      if (!key) {
+        return;
+      }
+
+
+      if (!months.has(key)) {
+
+        months.set(
+          key,
+          {
+            key: key,
+
+            year:
+              Number(transaction.year),
+
+            month:
+              Number(transaction.month),
+
+            income: 0,
+            expense: 0,
+            investment: 0
+          }
+        );
+      }
+
+
+      const month =
+        months.get(key);
+
+
+      month.income +=
+        Number(transaction.income) || 0;
+
+      month.expense +=
+        Number(transaction.expense) || 0;
+
+      month.investment +=
+        Number(transaction.investment) || 0;
+    }
+  );
+
+
+  return Array.from(
+    months.values()
+  ).sort(
+    (a, b) =>
+      a.key.localeCompare(b.key)
+  );
+}
+
+
+
+function formatMonthLabel(
+  year,
+  month
+) {
+
+  const date =
+    new Date(
+      year,
+      month - 1,
+      1
+    );
+
+
+  return new Intl.DateTimeFormat(
+    "en-US",
+    {
+      month: "short"
+    }
+  ).format(date);
+}
+
+
+/******************************************************************************
+ * MONTHLY MONEY FLOW
+ ******************************************************************************/
+
+function renderMoneyFlowChart(
+  transactions
+) {
+
+  const monthly =
+    aggregateTransactionsByMonth(
+      transactions
+    );
+
+
+  const usableMonths =
+    monthly.filter(
+      month =>
+        month.income > 0
+    );
+
+
+  if (!usableMonths.length) {
+
+    destroyChart(
+      "moneyFlow"
+    );
+
+    elements.moneyFlowCanvas.hidden =
+      true;
+
+    elements.moneyFlowEmpty.hidden =
+      false;
+
+    return;
+  }
+
+
+  elements.moneyFlowCanvas.hidden =
+    false;
+
+  elements.moneyFlowEmpty.hidden =
+    true;
+
+
+  const labels = [];
+
+  const expensePercentages = [];
+  const investmentPercentages = [];
+  const remainingPercentages = [];
+
+  const actualValues = [];
+
+
+  usableMonths.forEach(
+    month => {
+
+      labels.push(
+        formatMonthLabel(
+          month.year,
+          month.month
+        )
+      );
+
+
+      const remaining =
+        month.income -
+        month.expense -
+        month.investment;
+
+
+      const expensePct =
+        month.expense /
+        month.income;
+
+
+      const investmentPct =
+        month.investment /
+        month.income;
+
+
+      /*
+       * Keep the displayed remaining portion
+       * from going below zero.
+       *
+       * Overspending is communicated separately
+       * through the tooltip.
+       */
+      const remainingPct =
+        Math.max(
+          remaining / month.income,
+          0
+        );
+
+
+      /*
+       * If expenses + investments exceed income,
+       * the positive pieces would exceed 100%.
+       *
+       * Normalize them for the stacked visual,
+       * while preserving the actual dollar
+       * amounts separately.
+       */
+      const visualTotal =
+        expensePct +
+        investmentPct +
+        remainingPct;
+
+
+      expensePercentages.push(
+        visualTotal > 0
+          ? expensePct / visualTotal
+          : 0
+      );
+
+
+      investmentPercentages.push(
+        visualTotal > 0
+          ? investmentPct / visualTotal
+          : 0
+      );
+
+
+      remainingPercentages.push(
+        visualTotal > 0
+          ? remainingPct / visualTotal
+          : 0
+      );
+
+
+      actualValues.push({
+        income:
+          month.income,
+
+        expense:
+          month.expense,
+
+        investment:
+          month.investment,
+
+        remaining:
+          remaining,
+
+        overspent:
+          remaining < 0
+      });
+    }
+  );
+
+
+  if (moneyFlowChart) {
+    moneyFlowChart.destroy();
+  }
+
+
+  moneyFlowChart =
+    new Chart(
+      elements.moneyFlowCanvas,
+      {
+
+        type: "bar",
+
+        data: {
+
+          labels: labels,
+
+          datasets: [
+
+            {
+              label: "Expenses",
+
+              data:
+                expensePercentages,
+
+              backgroundColor:
+                "#AF8535",
+
+              borderRadius: 5
+            },
+
+            {
+              label: "Investments",
+
+              data:
+                investmentPercentages,
+
+              backgroundColor:
+                "#51CAB9",
+
+              borderRadius: 5
+            },
+
+            {
+              label: "Remaining",
+
+              data:
+                remainingPercentages,
+
+              backgroundColor:
+                "#8FAF7B",
+
+              borderRadius: 5
+            }
+
+          ]
+
+        },
+
+
+        options: {
+
+          responsive: true,
+
+          maintainAspectRatio: false,
+
+          interaction: {
+            mode: "index",
+            intersect: false
+          },
+
+
+          plugins: {
+
+            legend: {
+              position: "bottom"
+            },
+
+
+            tooltip: {
+
+              callbacks: {
+
+                title: context =>
+                  context[0].label,
+
+
+                label: context => {
+
+                  const month =
+                    actualValues[
+                      context.dataIndex
+                    ];
+
+
+                  let amount = 0;
+
+
+                  if (
+                    context.dataset.label ===
+                    "Expenses"
+                  ) {
+
+                    amount =
+                      month.expense;
+
+                  } else if (
+                    context.dataset.label ===
+                    "Investments"
+                  ) {
+
+                    amount =
+                      month.investment;
+
+                  } else {
+
+                    amount =
+                      month.remaining;
+                  }
+
+
+                  const percentage =
+                    context.raw * 100;
+
+
+                  return (
+                    `${context.dataset.label}: ` +
+                    `${formatCurrency(amount)} ` +
+                    `(${percentage.toFixed(1)}%)`
+                  );
+                },
+
+
+                afterBody: context => {
+
+                  const month =
+                    actualValues[
+                      context[0].dataIndex
+                    ];
+
+
+                  if (
+                    month.overspent
+                  ) {
+
+                    return [
+                      `⚠ ${formatCurrency(
+                        Math.abs(
+                          month.remaining
+                        )
+                      )} over income`
+                    ];
+                  }
+
+
+                  return [];
+                }
+
+              }
+
+            },
+
+
+            datalabels: {
+
+              color: "#ffffff",
+
+              font: {
+                size: 12,
+                weight: "bold"
+              },
+
+              formatter: value => {
+
+                if (value < 0.06) {
+                  return "";
+                }
+
+
+                return (
+                  value * 100
+                ).toFixed(0) + "%";
+              }
+
+            }
+
+          },
+
+
+          scales: {
+
+            x: {
+              stacked: true
+            },
+
+
+            y: {
+
+              stacked: true,
+
+              beginAtZero: true,
+
+              max: 1,
+
+              ticks: {
+
+                callback: value =>
+                  `${Math.round(
+                    value * 100
+                  )}%`
+
+              }
+
+            }
+
+          }
+
+        }
+
+      }
+    );
+}
+
+
+/******************************************************************************
+ * SPENDING BY CATEGORY
+ ******************************************************************************/
+
+function renderCategoryChart(
+  transactions
+) {
+
+  const categoryTotals =
+    new Map();
+
+
+  transactions.forEach(
+    transaction => {
+
+      const expense =
+        Number(
+          transaction.expense
+        ) || 0;
+
+
+      if (expense <= 0) {
+        return;
+      }
+
+
+      const category =
+        transaction.category ||
+        "uncategorized";
+
+
+      categoryTotals.set(
+        category,
+        (
+          categoryTotals.get(
+            category
+          ) || 0
+        ) + expense
+      );
+    }
+  );
+
+
+  const categories =
+    Array.from(
+      categoryTotals.entries()
+    )
+      .map(
+        ([category, total]) => ({
+          category,
+          total
+        })
+      )
+      .sort(
+        (a, b) =>
+          b.total - a.total
+      );
+
+
+  if (!categories.length) {
+
+    if (categoryChart) {
+      categoryChart.destroy();
+      categoryChart = null;
+    }
+
+    elements.categoryCanvas.hidden =
+      true;
+
+    elements.categoryChartEmpty.hidden =
+      false;
+
+    return;
+  }
+
+
+  elements.categoryCanvas.hidden =
+    false;
+
+  elements.categoryChartEmpty.hidden =
+    true;
+
+
+  if (categoryChart) {
+    categoryChart.destroy();
+  }
+
+
+  const data =
+    categories.map(
+      category =>
+        category.total
+    );
+
+
+  categoryChart =
+    new Chart(
+      elements.categoryCanvas,
+      {
+
+        type: "doughnut",
+
+        data: {
+
+          labels:
+            categories.map(
+              category =>
+                formatItemLabel(
+                  category.category
+                )
+            ),
+
+          datasets: [
+
+            {
+
+              data: data,
+
+              backgroundColor: [
+                "#0E6F6B",
+                "#51CAB9",
+                "#AF8535",
+                "#8FAF7B",
+                "#0A4F52",
+                "#D5A64A",
+                "#74B6A8",
+                "#9C8060"
+              ],
+
+              borderWidth: 2,
+
+              borderColor:
+                "#ffffff"
+
+            }
+
+          ]
+
+        },
+
+
+        options: {
+
+          responsive: true,
+
+          maintainAspectRatio: false,
+
+          cutout: "58%",
+
+
+          plugins: {
+
+            legend: {
+
+              position: "bottom",
+
+              labels: {
+                usePointStyle: true,
+                padding: 16
+              }
+
+            },
+
+
+            tooltip: {
+
+              callbacks: {
+
+                label: context => {
+
+                  const total =
+                    data.reduce(
+                      (sum, value) =>
+                        sum + value,
+                      0
+                    );
+
+
+                  const percentage =
+                    total > 0
+                      ? (
+                          context.raw /
+                          total
+                        ) * 100
+                      : 0;
+
+
+                  return (
+                    `${context.label}: ` +
+                    `${formatCurrency(
+                      context.raw
+                    )} ` +
+                    `(${percentage.toFixed(
+                      1
+                    )}%)`
+                  );
+                }
+
+              }
+
+            },
+
+
+            datalabels: {
+
+              color: "#ffffff",
+
+              font: {
+                size: 11,
+                weight: "bold"
+              },
+
+              formatter: (
+                value,
+                context
+              ) => {
+
+                const total =
+                  context.dataset.data.reduce(
+                    (sum, amount) =>
+                      sum + amount,
+                    0
+                  );
+
+
+                if (!total) {
+                  return "";
+                }
+
+
+                const percentage =
+                  value /
+                  total;
+
+
+                if (
+                  percentage < 0.07
+                ) {
+                  return "";
+                }
+
+
+                return (
+                  percentage * 100
+                ).toFixed(0) + "%";
+              }
+
+            }
+
+          }
+
+        }
+
+      }
+    );
+}
+
+
+/******************************************************************************
+ * NEEDS VS WANTS
+ ******************************************************************************/
+
+function renderNeedsWantsChart(
+  totals
+) {
+
+  const data = [
+    totals.needs,
+    totals.wants,
+    totals.unclassified
+  ];
+
+
+  const overall =
+    data.reduce(
+      (sum, amount) =>
+        sum + amount,
+      0
+    );
+
+
+  if (overall <= 0) {
+
+    if (needsWantsChart) {
+      needsWantsChart.destroy();
+      needsWantsChart = null;
+    }
+
+    elements.needsWantsCanvas.hidden =
+      true;
+
+    elements.needsWantsEmpty.hidden =
+      false;
+
+    return;
+  }
+
+
+  elements.needsWantsCanvas.hidden =
+    false;
+
+  elements.needsWantsEmpty.hidden =
+    true;
+
+
+  if (needsWantsChart) {
+    needsWantsChart.destroy();
+  }
+
+
+  needsWantsChart =
+    new Chart(
+      elements.needsWantsCanvas,
+      {
+
+        type: "doughnut",
+
+        data: {
+
+          labels: [
+            "Needs",
+            "Wants",
+            "Unclassified"
+          ],
+
+          datasets: [
+
+            {
+
+              data: data,
+
+              backgroundColor: [
+                "#0E6F6B",
+                "#AF8535",
+                "#b9b9b9"
+              ],
+
+              borderColor:
+                "#ffffff",
+
+              borderWidth: 2
+
+            }
+
+          ]
+
+        },
+
+
+        options: {
+
+          responsive: true,
+
+          maintainAspectRatio: false,
+
+          cutout: "58%",
+
+
+          plugins: {
+
+            legend: {
+
+              position: "bottom",
+
+              labels: {
+                usePointStyle: true,
+                padding: 16
+              }
+
+            },
+
+
+            tooltip: {
+
+              callbacks: {
+
+                label: context => {
+
+                  const percentage =
+                    overall > 0
+                      ? (
+                          context.raw /
+                          overall
+                        ) * 100
+                      : 0;
+
+
+                  return (
+                    `${context.label}: ` +
+                    `${formatCurrency(
+                      context.raw
+                    )} ` +
+                    `(${percentage.toFixed(
+                      1
+                    )}%)`
+                  );
+                }
+
+              }
+
+            },
+
+
+            datalabels: {
+
+              color: "#ffffff",
+
+              font: {
+                size: 12,
+                weight: "bold"
+              },
+
+              formatter: value => {
+
+                const percentage =
+                  value /
+                  overall;
+
+
+                if (
+                  percentage < 0.06
+                ) {
+                  return "";
+                }
+
+
+                return (
+                  percentage * 100
+                ).toFixed(0) + "%";
+              }
+
+            }
+
+          }
+
+        }
+
+      }
+    );
+}
+
+
+/******************************************************************************
+ * SPENDING TREND
+ ******************************************************************************/
+
+function renderSpendingTrendChart(
+  transactions
+) {
+
+  const monthly =
+    aggregateTransactionsByMonth(
+      transactions
+    );
+
+
+  const expenseMonths =
+    monthly.filter(
+      month =>
+        month.expense > 0
+    );
+
+
+  if (!expenseMonths.length) {
+
+    if (spendingTrendChart) {
+      spendingTrendChart.destroy();
+      spendingTrendChart = null;
+    }
+
+    elements.spendingTrendCanvas.hidden =
+      true;
+
+    elements.spendingTrendEmpty.hidden =
+      false;
+
+    return;
+  }
+
+
+  elements.spendingTrendCanvas.hidden =
+    false;
+
+  elements.spendingTrendEmpty.hidden =
+    true;
+
+
+  if (spendingTrendChart) {
+    spendingTrendChart.destroy();
+  }
+
+
+  spendingTrendChart =
+    new Chart(
+      elements.spendingTrendCanvas,
+      {
+
+        type: "line",
+
+        data: {
+
+          labels:
+            expenseMonths.map(
+              month =>
+                formatMonthLabel(
+                  month.year,
+                  month.month
+                )
+            ),
+
+          datasets: [
+
+            {
+
+              label: "Expenses",
+
+              data:
+                expenseMonths.map(
+                  month =>
+                    month.expense
+                ),
+
+              borderColor:
+                "#0E6F6B",
+
+              backgroundColor:
+                "rgba(14,111,107,0.12)",
+
+              fill: true,
+
+              tension: 0.3,
+
+              pointRadius: 4,
+
+              pointHoverRadius: 6
+
+            }
+
+          ]
+
+        },
+
+
+        options: {
+
+          responsive: true,
+
+          maintainAspectRatio: false,
+
+
+          plugins: {
+
+            legend: {
+              display: false
+            },
+
+
+            tooltip: {
+
+              callbacks: {
+
+                label: context =>
+                  `Expenses: ${formatCurrency(
+                    context.raw
+                  )}`
+
+              }
+
+            },
+
+
+            datalabels: {
+              display: false
+            }
+
+          },
+
+
+          scales: {
+
+            y: {
+
+              beginAtZero: true,
+
+              ticks: {
+
+                callback: value =>
+                  new Intl.NumberFormat(
+                    "en-US",
+                    {
+                      style: "currency",
+                      currency: "USD",
+                      maximumFractionDigits: 0
+                    }
+                  ).format(value)
+
+              }
+
+            }
+
+          }
+
+        }
+
+      }
+    );
+}
+
+
+
+
+
+function destroyChart(
+  chartName
+) {
+
+  if (
+    chartName === "moneyFlow" &&
+    moneyFlowChart
+  ) {
+
+    moneyFlowChart.destroy();
+    moneyFlowChart = null;
+  }
+}
+
+
 
 
 /********************************************************
