@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<!--------------------------------------------------------
+Refactored index.html file (8/2/2026)
+Created to provide updates, revisions, and Need/Want
+--------------------------------------------------------->
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+<title>Shuffle Budget Dashboard</title>
+<link href="manifest.json" rel="manifest"/>
+<meta content="#ffffff" name="theme-color"/>
+<link href="style.css" rel="stylesheet"/>
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!-- Chart.js Data Labels -->
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+</head>
+<body data-dashboard-only="true">
+<!-- Replaced old header with upgraded header + nav system  [8/16/2026] -->
+<header class="app-header">
+<div class="logo">
+<a href="index.html">
+<img alt="Lauren, reimagined" src="logotransparent2.png"/>
+</a>
+</div>
+</header><p class="shared-dashboard-note">Shared dashboard · view only</p>
+
+<!----------  End Additions --------------->
+<main>
+<!-- Added Form Wrapping [8/16/2026] -->
+
+<!-- Add Dasbhoard View [8/16/2026]-->
+<section class="app-view" id="dashboardView">
+<div class="dashboard-shell">
+<!-- =========================================
+         DASHBOARD HEADER
+    ========================================== -->
+<section class="dashboard-header">
+<div>
+<h1>Dashboard</h1>
+<p class="dashboard-subtitle">
+          Live financial overview
+        </p>
+</div>
+<button class="refresh-btn" id="refreshDashboardBtn" type="button">
+        ↻ Refresh
+      </button>
+</section>
+<!-- =========================================
+         DASHBOARD STATUS
+    ========================================== -->
+<div aria-live="polite" class="dashboard-load-status" id="dashboardStatus" role="status">
+      Dashboard has not been loaded yet.
+    </div>
+<!-- =========================================
+     DASHBOARD MODE NAVIGATION
+========================================== -->
+<nav aria-label="Dashboard views" class="dashboard-mode-nav" hidden="" id="dashboardModeNav">
+<button aria-selected="true" class="dashboard-mode-btn active" id="showOverviewBtn" type="button">
+    Overview
+  </button>
+<button aria-selected="false" class="dashboard-mode-btn" id="showExploreBtn" type="button">
+    Explore
+  </button>
+</nav>
+<!-- =========================================
+         OVERVIEW FILTERS
+    ========================================== -->
+<section class="dashboard-panel" id="overviewPanel">
+<section class="dashboard-filters" hidden="" id="dashboardFilters">
+<div class="filter-group">
+<label for="dashboardYear">
+          Year
+        </label>
+<select id="dashboardYear">
+</select>
+</div>
+<div class="filter-group">
+<label for="dashboardPeriod">
+          Period
+        </label>
+<select id="dashboardPeriod">
+<option value="ytd">
+            Year to Date
+          </option>
+<option value="month">
+            Month
+          </option>
+<option value="week">
+            This Week
+          </option>
+<option value="fullYear">
+            Full Year
+          </option>
+</select>
+</div>
+<div class="filter-group">
+<label for="dashboardPerson">
+          Person
+        </label>
+<select id="dashboardPerson">
+<option value="All">
+            All
+          </option>
+<option value="Household">
+            Household
+          </option>
+<option value="Lauren">
+            Lauren
+          </option>
+<option value="Sam">
+            Sam
+          </option>
+</select>
+</div>
+</section>
+<!-- =========================================
+         KPI CARDS
+    ========================================== -->
+<section class="dashboard-content" hidden="" id="dashboardContent">
+<div class="kpi-grid">
+<article class="kpi-card">
+<span class="kpi-label">
+            Income
+          </span>
+<strong class="kpi-value" id="kpiIncome">
+            $0.00
+          </strong>
+</article>
+<article class="kpi-card">
+<span class="kpi-label">
+            Expenses
+          </span>
+<strong class="kpi-value" id="kpiExpenses">
+            $0.00
+          </strong>
+</article>
+<article class="kpi-card">
+<span class="kpi-label">
+            Savings / Investments
+          </span>
+<strong class="kpi-value" id="kpiInvestments">
+            $0.00
+          </strong>
+</article>
+<article class="kpi-card">
+<span class="kpi-label">
+            Remaining
+          </span>
+<strong class="kpi-value" id="kpiRemaining">
+            $0.00
+          </strong>
+</article>
+<article class="kpi-card">
+<span class="kpi-label">
+            Savings Rate
+          </span>
+<strong class="kpi-value" id="kpiSavingsRate">
+            0.0%
+          </strong>
+</article>
+<article class="kpi-card">
+<span class="kpi-label">
+            Needs / Wants
+          </span>
+<strong class="kpi-value kpi-value-small" id="kpiNeedsWants">
+            -- / --
+          </strong>
+</article>
+</div>
+<!-- =========================================
+     OVERVIEW CHARTS
+========================================== -->
+<section class="dashboard-chart-grid">
+<!-- Monthly Money Flow -->
+<article class="chart-card chart-card-wide">
+<div class="chart-card-header">
+<div>
+<h2>Monthly Money Flow</h2>
+<p>
+          How income is divided between spending,
+          investments, and remaining income
+        </p>
+</div>
+</div>
+<div class="chart-wrapper chart-wrapper-large">
+<canvas aria-label="Monthly money flow chart" id="moneyFlowChart" role="img"></canvas>
+</div>
+<div class="chart-empty" hidden="" id="moneyFlowEmpty">
+      No income data is available for this selection.
+    </div>
+</article>
+<!-- Spending By Category -->
+<article class="chart-card">
+<div class="chart-card-header">
+<div>
+<h2>Spending by Category</h2>
+<p>
+          Where your expense dollars are going
+        </p>
+</div>
+</div>
+<div class="chart-wrapper">
+<canvas aria-label="Spending by category chart" id="categoryChart" role="img"></canvas>
+</div>
+<div class="chart-empty" hidden="" id="categoryChartEmpty">
+      No expense data is available for this selection.
+    </div>
+</article>
+<!-- Needs vs Wants -->
+<article class="chart-card">
+<div class="chart-card-header">
+<div>
+<h2>Needs vs. Wants</h2>
+<p>
+          How classified expenses are divided
+        </p>
+</div>
+</div>
+<div class="chart-wrapper">
+<canvas aria-label="Needs versus wants chart" id="needsWantsChart" role="img"></canvas>
+</div>
+<div class="chart-empty" hidden="" id="needsWantsEmpty">
+      No expense data is available for this selection.
+    </div>
+</article>
+<!-- Spending Trend -->
+<article class="chart-card chart-card-wide">
+<div class="chart-card-header">
+<div>
+<h2>Spending Trend</h2>
+<p>
+          Expense totals over time
+        </p>
+</div>
+</div>
+<div class="chart-wrapper chart-wrapper-large">
+<canvas aria-label="Monthly spending trend chart" id="spendingTrendChart" role="img"></canvas>
+</div>
+<div class="chart-empty" hidden="" id="spendingTrendEmpty">
+      No expense data is available for this selection.
+    </div>
+</article>
+</section>
+<!-- =========================================
+           PERIOD SUMMARY
+      ========================================== -->
+<section class="overview-card">
+<div class="overview-card-header">
+<div>
+<h2>
+              Current Selection
+            </h2>
+<p class="selection-description" id="selectionDescription">
+</p>
+</div>
+<span class="transaction-count" id="transactionCount">
+</span>
+</div>
+</section>
+<!-- =========================================
+           RECENT TRANSACTIONS
+      ========================================== -->
+<section class="overview-card">
+<div class="overview-card-header">
+<div>
+<h2>
+              Recent Transactions
+            </h2>
+<p class="selection-description">
+              Most recent matching activity
+            </p>
+</div>
+</div>
+<div class="recent-transactions" id="recentTransactions">
+</div>
+</section>
+</section>
+</section>
+<!-- =========================================
+     EXPLORE
+========================================== -->
+<section class="dashboard-panel" hidden="" id="explorePanel">
+<section class="explore-header">
+<div>
+<h2>Explore Your Spending</h2>
+<p>
+        Filter, group, and analyze transactions
+        from your live budget data.
+      </p>
+</div>
+<button class="explore-reset-btn" id="resetExploreBtn" type="button">
+      Reset
+    </button>
+</section>
+<!-- =========================================
+       EXPLORE FILTERS
+  ========================================== -->
+<section class="explore-controls">
+<div class="filter-group">
+<label for="exploreYear">
+        Year
+      </label>
+<select id="exploreYear">
+</select>
+</div>
+<div class="filter-group">
+<label for="explorePeriod">
+        Period
+      </label>
+<select id="explorePeriod">
+<option value="ytd">
+          Year to Date
+        </option>
+<option value="fullYear">
+          Full Year
+        </option>
+<option value="month">
+          Month
+        </option>
+<option value="week">
+          Week
+        </option>
+<option value="custom">
+          Custom Dates
+        </option>
+</select>
+</div>
+<div class="filter-group" hidden="" id="exploreMonthGroup">
+<label for="exploreMonth">
+    Month
+  </label>
+<select id="exploreMonth">
+<option value="1">January</option>
+<option value="2">February</option>
+<option value="3">March</option>
+<option value="4">April</option>
+<option value="5">May</option>
+<option value="6">June</option>
+<option value="7">July</option>
+<option value="8">August</option>
+<option value="9">September</option>
+<option value="10">October</option>
+<option value="11">November</option>
+<option value="12">December</option>
+</select>
+</div>
+<div class="filter-group" hidden="" id="exploreWeekGroup">
+<label for="exploreWeek">
+    Week
+  </label>
+<select id="exploreWeek">
+</select>
+</div>
+<div class="custom-date-controls" hidden="" id="customDateControls">
+<div class="filter-group">
+<label for="exploreStartDate">
+          Start
+        </label>
+<input id="exploreStartDate" type="date"/>
+</div>
+<div class="filter-group">
+<label for="exploreEndDate">
+          End
+        </label>
+<input id="exploreEndDate" type="date"/>
+</div>
+</div>
+<div class="filter-group">
+<label for="explorePerson">
+        Person
+      </label>
+<select id="explorePerson">
+<option value="All">All</option>
+<option value="Household">Household</option>
+<option value="Lauren">Lauren</option>
+<option value="Sam">Sam</option>
+</select>
+</div>
+<div class="filter-group">
+<label for="exploreCategory">
+        Category
+      </label>
+<select id="exploreCategory">
+<option value="All">All Categories</option>
+</select>
+</div>
+<div class="filter-group" hidden="" id="explorePetGroup">
+<label for="explorePet">Pet</label>
+<select id="explorePet">
+<option value="All">All Pets</option>
+<option value="Dog">Dog</option>
+<option value="Bird">Bird</option>
+</select>
+</div>
+<div class="filter-group">
+<label for="exploreItem">
+        Item
+      </label>
+<select id="exploreItem">
+<option value="All">All Items</option>
+</select>
+</div>
+<div class="filter-group">
+<label for="exploreType">
+        Type
+      </label>
+<select id="exploreType">
+<option value="All">All Types</option>
+<option value="bill">Bill</option>
+<option value="subscription">Subscription</option>
+<option value="other">Other Expense</option>
+<option value="income">Income</option>
+<option value="investment">Investment</option>
+</select>
+</div>
+<div class="filter-group">
+<label for="exploreNeedWant">
+        Classification
+      </label>
+<select id="exploreNeedWant">
+<option value="All">All</option>
+<option value="Need">Need</option>
+<option value="Want">Want</option>
+<option value="Income">Income</option>
+<option value="Savings">Savings</option>
+<option value="Unclassified">Unclassified</option>
+</select>
+</div>
+<div class="filter-group explore-search-group">
+<label for="exploreSearch">
+        Search
+      </label>
+<input autocomplete="off" id="exploreSearch" placeholder="Amazon, vet, hotel..." type="search"/>
+</div>
+<div class="filter-group">
+<label for="exploreMeasure">Measure</label>
+<select id="exploreMeasure">
+<option value="spending">Spending</option>
+<option value="income">Income</option>
+<option value="investments">Savings / Investments</option>
+<option value="netCashflow">Net Cash Flow</option>
+</select>
+</div>
+<div class="filter-group">
+<label for="exploreBreakdown">
+        Break Down By
+      </label>
+<select id="exploreBreakdown">
+<option value="month">
+          Month
+        </option>
+<option value="week">
+          Week
+        </option>
+<option value="category">
+          Category
+        </option>
+<option value="item">
+          Item
+        </option>
+<option value="person">
+          Person
+        </option>
+<option value="type">
+          Type
+        </option>
+<option value="needWant">
+          Need / Want
+        </option>
+</select>
+</div>
+<div class="filter-group">
+<label for="exploreMetric">
+        Metric
+      </label>
+<select id="exploreMetric">
+<option value="dollars">
+          Total Dollars
+        </option>
+<option value="percent">
+          Percent of Total
+        </option>
+<option value="count">
+          Transaction Count
+        </option>
+<option value="average">
+          Average Transaction
+        </option>
+</select>
+</div>
+</section>
+<!-- =========================================
+     ACTIVE FILTERS
+========================================== -->
+<section class="explore-active-filters" hidden="" id="exploreActiveFilters">
+<span class="active-filters-label">
+    Active filters
+  </span>
+<div class="explore-filter-chips" id="exploreFilterChips">
+</div>
+</section>
+<!-- =========================================
+     CHART DRILL-DOWN
+========================================== -->
+<section class="explore-drilldown" hidden="" id="exploreDrilldown">
+<span class="explore-drilldown-label">
+    Drilled into
+  </span>
+<button class="explore-drilldown-chip" id="clearExploreDrilldown" type="button">
+<span id="exploreDrilldownText"></span>
+<span aria-hidden="true" class="filter-chip-remove">
+      ×
+    </span>
+</button>
+</section>
+<!-- =========================================
+       EXPLORE SUMMARY
+  ========================================== -->
+<section class="explore-summary-grid">
+<article class="explore-summary-card">
+<span id="exploreTotalLabel">Spending</span>
+<strong id="exploreTotal">
+        $0.00
+      </strong>
+</article>
+<article class="explore-summary-card">
+<span id="exploreCountLabel">Transactions</span>
+<strong id="exploreCount">
+        0
+      </strong>
+</article>
+<article class="explore-summary-card explore-average-card">
+<span id="exploreAverageLabel">Average per Transaction</span>
+<strong id="exploreAverage">
+        $0.00
+      </strong>
+<label class="average-breakdown-toggle">
+<input id="exploreAverageByBreakdown" type="checkbox"/>
+<span>Average per selected breakdown</span>
+</label>
+</article>
+</section>
+<!-- =========================================
+       PERIOD COMPARISON
+  ========================================== -->
+<section class="explore-comparison-card" id="exploreComparisonCard">
+<div class="explore-comparison-heading">
+<div>
+<span class="explore-comparison-eyebrow">Period comparison</span>
+<h3 id="exploreComparisonTitle">Current vs. previous period</h3>
+</div>
+<span class="explore-comparison-change neutral" id="exploreComparisonChange">
+        --
+      </span>
+</div>
+<div class="explore-comparison-values">
+<div>
+<span id="exploreComparisonCurrentLabel">Current</span>
+<strong id="exploreComparisonCurrent">$0.00</strong>
+</div>
+<div>
+<span id="exploreComparisonPreviousLabel">Previous</span>
+<strong id="exploreComparisonPrevious">$0.00</strong>
+</div>
+</div>
+<p class="explore-comparison-note" id="exploreComparisonNote">
+      Compares total dollars using the current Explorer filters.
+    </p>
+</section>
+<!-- =========================================
+       DYNAMIC CHART
+  ========================================== -->
+<section class="chart-card explore-chart-card">
+<div class="chart-card-header">
+<div>
+<h2 id="exploreChartTitle">
+          Spending by Month
+        </h2>
+<p id="exploreChartSubtitle">
+          Based on your current filters
+        </p>
+</div>
+</div>
+<div class="chart-wrapper chart-wrapper-large">
+<canvas aria-label="Dynamic explorer chart" id="exploreChart" role="img"></canvas>
+</div>
+<div class="chart-empty" hidden="" id="exploreChartEmpty">
+      No transactions match these filters.
+    </div>
+</section>
+<!-- =========================================
+       MATCHING TRANSACTIONS
+  ========================================== -->
+<section class="overview-card">
+<div class="overview-card-header">
+<div>
+<h2>
+          Matching Transactions
+        </h2>
+<p class="selection-description" id="exploreTableDescription">
+</p>
+<p class="table-sort-help desktop-sort-help">
+  Click a column to sort.
+  Shift+click additional columns for multi-column sorting.
+</p>
+<p class="table-sort-help mobile-table-help">
+  Tap a transaction card for full details. Use the sort controls below to build a multi-column sort.
+</p>
+<div aria-label="Mobile transaction sorting" class="mobile-sort-controls">
+<div class="mobile-sort-row">
+<label for="mobileSortField">Sort by</label>
+<select id="mobileSortField">
+<option value="date">Date</option>
+<option value="person">Person</option>
+<option value="category">Category</option>
+<option value="item">Item</option>
+<option value="type">Type</option>
+<option value="needWant">Need / Want</option>
+<option value="notes">Notes</option>
+<option value="amount">Amount</option>
+</select>
+</div>
+<div class="mobile-sort-row">
+<label for="mobileSortDirection">Direction</label>
+<select id="mobileSortDirection">
+<option value="desc">Descending</option>
+<option value="asc">Ascending</option>
+</select>
+</div>
+<div class="mobile-sort-actions">
+<button class="mobile-sort-btn" id="addMobileSortBtn" type="button">
+      Add / Update Sort
+    </button>
+<button class="mobile-sort-btn secondary-mobile-sort" id="resetMobileSortBtn" type="button">
+      Reset Sort
+    </button>
+</div>
+<div aria-live="polite" class="mobile-sort-summary" id="mobileSortSummary"></div>
+</div>
+</div>
+</div>
+<div class="explore-table-wrapper">
+<table class="explore-table">
+<thead>
+<tr>
+<th>
+<button class="table-sort-btn" data-sort="date" type="button">
+        Date
+        <span class="sort-indicator"></span>
+</button>
+</th>
+<th>
+<button class="table-sort-btn" data-sort="person" type="button">
+        Person
+        <span class="sort-indicator"></span>
+</button>
+</th>
+<th>
+<button class="table-sort-btn" data-sort="category" type="button">
+        Category
+        <span class="sort-indicator"></span>
+</button>
+</th>
+<th>
+<button class="table-sort-btn" data-sort="item" type="button">
+        Item
+        <span class="sort-indicator"></span>
+</button>
+</th>
+<th>
+<button class="table-sort-btn" data-sort="type" type="button">
+        Type
+        <span class="sort-indicator"></span>
+</button>
+</th>
+<th>
+<button class="table-sort-btn" data-sort="needWant" type="button">
+        N/W
+        <span class="sort-indicator"></span>
+</button>
+</th>
+<th>
+<button class="table-sort-btn" data-sort="notes" type="button">
+        Notes
+        <span class="sort-indicator"></span>
+</button>
+</th>
+<th>
+<button class="table-sort-btn" data-sort="amount" type="button">
+        Amount
+        <span class="sort-indicator"></span>
+</button>
+</th>
+</tr>
+</thead>
+<tbody id="exploreTableBody">
+</tbody>
+</table>
+</div>
+</section>
+</section>
+<!-- =========================================
+       TRANSACTION DETAIL DIALOG
+  ========================================== -->
+<dialog aria-labelledby="transactionDetailTitle" class="transaction-detail-dialog" id="transactionDetailDialog">
+<div class="transaction-detail-shell">
+<div class="transaction-detail-header">
+<div>
+<span class="transaction-detail-eyebrow">Transaction details</span>
+<h2 id="transactionDetailTitle">Transaction</h2>
+</div>
+<button aria-label="Close transaction details" class="transaction-detail-close" id="closeTransactionDetailBtn" type="button">
+          ×
+        </button>
+</div>
+<dl class="transaction-detail-list">
+<div>
+<dt>Date</dt>
+<dd id="detailDate">—</dd>
+</div>
+<div>
+<dt>Amount</dt>
+<dd id="detailAmount">—</dd>
+</div>
+<div>
+<dt>Person</dt>
+<dd id="detailPerson">—</dd>
+</div>
+<div>
+<dt>Category</dt>
+<dd id="detailCategory">—</dd>
+</div>
+<div>
+<dt>Item</dt>
+<dd id="detailItem">—</dd>
+</div>
+<div>
+<dt>Type</dt>
+<dd id="detailType">—</dd>
+</div>
+<div>
+<dt>Need / Want</dt>
+<dd id="detailNeedWant">—</dd>
+</div>
+<div class="transaction-detail-notes">
+<dt>Notes</dt>
+<dd id="detailNotes">—</dd>
+</div>
+</dl>
+</div>
+</dialog>
+</div>
+</section>
+<!------- End of Additions  ------->
+</main>
+<!-- -------------------------------------------------- JAVA SCRIPT --------------------------------------------------- -->
+<!-- -------------------------------------------------- JAVA SCRIPT --------------------------------------------------- -->
+<!-- -------------------------------------------------- JAVA SCRIPT --------------------------------------------------- -->
+<script defer="" src="app.js"></script>
+</body>
+</html>
