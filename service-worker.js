@@ -1,4 +1,4 @@
-const CACHE_NAME = "budget-v8";
+const CACHE_NAME = "budget-v9";
 
 const FILES_TO_CACHE = [
   "index.html",
