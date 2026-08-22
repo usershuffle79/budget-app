@@ -1371,10 +1371,54 @@ style="display:none; margin-top:30px;">
         </p>
 
 
-<p class="table-sort-help">
+<p class="table-sort-help desktop-sort-help">
   Click a column to sort.
   Shift+click additional columns for multi-column sorting.
 </p>
+
+<p class="table-sort-help mobile-table-help">
+  Tap a transaction card for full details. Use the sort controls below to build a multi-column sort.
+</p>
+
+<div class="mobile-sort-controls" aria-label="Mobile transaction sorting">
+  <div class="mobile-sort-row">
+    <label for="mobileSortField">Sort by</label>
+    <select id="mobileSortField">
+      <option value="date">Date</option>
+      <option value="person">Person</option>
+      <option value="category">Category</option>
+      <option value="item">Item</option>
+      <option value="type">Type</option>
+      <option value="needWant">Need / Want</option>
+      <option value="notes">Notes</option>
+      <option value="amount">Amount</option>
+    </select>
+  </div>
+
+  <div class="mobile-sort-row">
+    <label for="mobileSortDirection">Direction</label>
+    <select id="mobileSortDirection">
+      <option value="desc">Descending</option>
+      <option value="asc">Ascending</option>
+    </select>
+  </div>
+
+  <div class="mobile-sort-actions">
+    <button type="button" id="addMobileSortBtn" class="mobile-sort-btn">
+      Add / Update Sort
+    </button>
+
+    <button type="button" id="resetMobileSortBtn" class="mobile-sort-btn secondary-mobile-sort">
+      Reset Sort
+    </button>
+  </div>
+
+  <div
+    id="mobileSortSummary"
+    class="mobile-sort-summary"
+    aria-live="polite"
+  ></div>
+</div>
 
       </div>
 
@@ -1499,6 +1543,76 @@ style="display:none; margin-top:30px;">
 
 </section>
 
+  <!-- =========================================
+       TRANSACTION DETAIL DIALOG
+  ========================================== -->
+
+  <dialog
+    id="transactionDetailDialog"
+    class="transaction-detail-dialog"
+    aria-labelledby="transactionDetailTitle"
+  >
+    <div class="transaction-detail-shell">
+      <div class="transaction-detail-header">
+        <div>
+          <span class="transaction-detail-eyebrow">Transaction details</span>
+          <h2 id="transactionDetailTitle">Transaction</h2>
+        </div>
+
+        <button
+          type="button"
+          id="closeTransactionDetailBtn"
+          class="transaction-detail-close"
+          aria-label="Close transaction details"
+        >
+          ×
+        </button>
+      </div>
+
+      <dl class="transaction-detail-list">
+        <div>
+          <dt>Date</dt>
+          <dd id="detailDate">—</dd>
+        </div>
+
+        <div>
+          <dt>Amount</dt>
+          <dd id="detailAmount">—</dd>
+        </div>
+
+        <div>
+          <dt>Person</dt>
+          <dd id="detailPerson">—</dd>
+        </div>
+
+        <div>
+          <dt>Category</dt>
+          <dd id="detailCategory">—</dd>
+        </div>
+
+        <div>
+          <dt>Item</dt>
+          <dd id="detailItem">—</dd>
+        </div>
+
+        <div>
+          <dt>Type</dt>
+          <dd id="detailType">—</dd>
+        </div>
+
+        <div>
+          <dt>Need / Want</dt>
+          <dd id="detailNeedWant">—</dd>
+        </div>
+
+        <div class="transaction-detail-notes">
+          <dt>Notes</dt>
+          <dd id="detailNotes">—</dd>
+        </div>
+      </dl>
+    </div>
+  </dialog>
+
   </div>
 
 </section>
@@ -1622,6 +1736,24 @@ exploreFilterChips:
 
   exploreTableBody: document.getElementById("exploreTableBody"),
   exploreTableDescription: document.getElementById("exploreTableDescription"),
+
+  mobileSortField: document.getElementById("mobileSortField"),
+  mobileSortDirection: document.getElementById("mobileSortDirection"),
+  addMobileSortButton: document.getElementById("addMobileSortBtn"),
+  resetMobileSortButton: document.getElementById("resetMobileSortBtn"),
+  mobileSortSummary: document.getElementById("mobileSortSummary"),
+
+  transactionDetailDialog: document.getElementById("transactionDetailDialog"),
+  closeTransactionDetailButton: document.getElementById("closeTransactionDetailBtn"),
+  transactionDetailTitle: document.getElementById("transactionDetailTitle"),
+  detailDate: document.getElementById("detailDate"),
+  detailAmount: document.getElementById("detailAmount"),
+  detailPerson: document.getElementById("detailPerson"),
+  detailCategory: document.getElementById("detailCategory"),
+  detailItem: document.getElementById("detailItem"),
+  detailType: document.getElementById("detailType"),
+  detailNeedWant: document.getElementById("detailNeedWant"),
+  detailNotes: document.getElementById("detailNotes"),
 
   refreshDashboardButton: document.getElementById("refreshDashboardBtn"),
   dashboardStatus: document.getElementById("dashboardStatus"),
@@ -2045,6 +2177,30 @@ elements.exploreYear.addEventListener(
   elements.editButton.addEventListener("click", returnToForm);
   elements.confirmButton.addEventListener("click", submitTransaction);
 
+  elements.addMobileSortButton.addEventListener(
+    "click",
+    applyMobileSort
+  );
+
+  elements.resetMobileSortButton.addEventListener(
+    "click",
+    resetMobileSorts
+  );
+
+  elements.closeTransactionDetailButton.addEventListener(
+    "click",
+    closeTransactionDetail
+  );
+
+  elements.transactionDetailDialog.addEventListener(
+    "click",
+    event => {
+      if (event.target === elements.transactionDetailDialog) {
+        closeTransactionDetail();
+      }
+    }
+  );
+
 
 document
   .querySelectorAll(".table-sort-btn")
@@ -2124,30 +2280,6 @@ async function showDashboardView() {
     await loadDashboardData();
   }
 }
-
-
-/**  CAN DELETE [8/16/2026]
-function showDashboardView() {
-  elements.formView.hidden = true;
-  elements.dashboardView.hidden = false;
-
-  elements.formView.classList.remove("active-view");
-  elements.dashboardView.classList.add("active-view");
-
-  elements.showFormButton.classList.remove("active");
-  elements.showDashboardButton.classList.add("active");
-
-  elements.showFormButton.setAttribute(
-    "aria-selected",
-    "false"
-  );
-
-  elements.showDashboardButton.setAttribute(
-    "aria-selected",
-    "true"
-  );
-}
-**/
 
 
 /******************************************************************************
@@ -4489,44 +4621,317 @@ function renderExploreTable(
 
     row.appendChild(cell);
     elements.exploreTableBody.appendChild(row);
+
     updateExploreSortIndicators();
     return;
   }
 
+  const cellDefinitions = [
+    {
+      label: "Date",
+      value: transaction =>
+        formatShortDate(transaction.date)
+    },
+    {
+      label: "Person",
+      value: transaction =>
+        transaction.person
+    },
+    {
+      label: "Category",
+      value: transaction =>
+        formatItemLabel(transaction.category)
+    },
+    {
+      label: "Item",
+      value: transaction =>
+        formatItemLabel(transaction.item)
+    },
+    {
+      label: "Type",
+      value: transaction =>
+        formatItemLabel(transaction.type)
+    },
+    {
+      label: "N/W",
+      value: transaction =>
+        transaction.needWant
+    },
+    {
+      label: "Notes",
+      value: transaction =>
+        transaction.notes || "-"
+    },
+    {
+      label: "Amount",
+      value: transaction =>
+        formatCurrency(transaction.amount)
+    }
+  ];
+
   sorted.forEach(transaction => {
     const row = document.createElement("tr");
 
-    const cells = [
-      formatShortDate(transaction.date),
-      transaction.person,
-      formatItemLabel(transaction.category),
-      formatItemLabel(transaction.item),
-      formatItemLabel(transaction.type),
-      transaction.needWant,
-      transaction.notes || "-",
-      formatCurrency(transaction.amount)
-    ];
+    row.className = "transaction-row";
+    row.tabIndex = 0;
+    row.setAttribute("role", "button");
+    row.setAttribute(
+      "aria-label",
+      `View details for ${formatItemLabel(transaction.item)}, ${formatCurrency(transaction.amount)}`
+    );
 
-    cells.forEach((value, index) => {
-      const cell = document.createElement("td");
-      cell.textContent = value || "-";
+    row.addEventListener(
+      "click",
+      () => openTransactionDetail(transaction)
+    );
 
-      if (index === 6) {
-        cell.classList.add("notes-cell");
-        cell.title = transaction.notes || "";
+    row.addEventListener(
+      "keydown",
+      event => {
+        if (
+          event.key === "Enter" ||
+          event.key === " "
+        ) {
+          event.preventDefault();
+          openTransactionDetail(transaction);
+        }
       }
+    );
 
-      if (index === 7) {
-        cell.classList.add("amount-cell");
+    cellDefinitions.forEach(
+      (definition, index) => {
+
+        const cell =
+          document.createElement("td");
+
+        const value =
+          definition.value(transaction);
+
+        cell.textContent =
+          value || "-";
+
+        cell.dataset.label =
+          definition.label;
+
+        if (index === 6) {
+          cell.classList.add("notes-cell");
+          cell.title =
+            transaction.notes || "";
+        }
+
+        if (index === 7) {
+          cell.classList.add(
+            "amount-cell"
+          );
+        }
+
+        row.appendChild(cell);
       }
+    );
 
-      row.appendChild(cell);
-    });
-
-    elements.exploreTableBody.appendChild(row);
+    elements.exploreTableBody
+      .appendChild(row);
   });
 
   updateExploreSortIndicators();
+}
+
+/******************************************************************************
+ * TRANSACTION DETAIL
+ ******************************************************************************/
+
+function openTransactionDetail(
+  transaction
+) {
+
+  elements.transactionDetailTitle.textContent =
+    formatItemLabel(
+      transaction.item
+    ) || "Transaction";
+
+  elements.detailDate.textContent =
+    formatDateForDisplay(
+      transaction.date
+    ) || "—";
+
+  elements.detailAmount.textContent =
+    formatCurrency(
+      Number(transaction.amount) || 0
+    );
+
+  elements.detailPerson.textContent =
+    transaction.person || "—";
+
+  elements.detailCategory.textContent =
+    formatItemLabel(
+      transaction.category
+    ) || "—";
+
+  elements.detailItem.textContent =
+    formatItemLabel(
+      transaction.item
+    ) || "—";
+
+  elements.detailType.textContent =
+    formatItemLabel(
+      transaction.type
+    ) || "—";
+
+  elements.detailNeedWant.textContent =
+    transaction.needWant || "—";
+
+  elements.detailNotes.textContent =
+    transaction.notes || "No notes.";
+
+  if (
+    typeof elements.transactionDetailDialog.showModal ===
+    "function"
+  ) {
+    elements.transactionDetailDialog.showModal();
+  } else {
+    elements.transactionDetailDialog.setAttribute(
+      "open",
+      ""
+    );
+  }
+}
+
+
+function closeTransactionDetail() {
+
+  if (
+    typeof elements.transactionDetailDialog.close ===
+      "function" &&
+    elements.transactionDetailDialog.open
+  ) {
+    elements.transactionDetailDialog.close();
+  } else {
+    elements.transactionDetailDialog.removeAttribute(
+      "open"
+    );
+  }
+}
+
+
+/******************************************************************************
+ * MOBILE MULTI-COLUMN SORTING
+ ******************************************************************************/
+
+function applyMobileSort() {
+
+  const field =
+    elements.mobileSortField.value;
+
+  const direction =
+    elements.mobileSortDirection.value;
+
+  if (!field) {
+    return;
+  }
+
+  const existingIndex =
+    exploreSorts.findIndex(
+      sort =>
+        sort.field === field
+    );
+
+  if (existingIndex >= 0) {
+    exploreSorts[
+      existingIndex
+    ].direction = direction;
+  } else {
+    exploreSorts.push({
+      field: field,
+      direction: direction
+    });
+  }
+
+  updateExploreSortIndicators();
+
+  renderExploreTable(
+    getDrilledExplorerTransactions()
+  );
+}
+
+
+function resetMobileSorts() {
+
+  exploreSorts = [
+    {
+      field: "date",
+      direction: "desc"
+    }
+  ];
+
+  elements.mobileSortField.value =
+    "date";
+
+  elements.mobileSortDirection.value =
+    "desc";
+
+  updateExploreSortIndicators();
+
+  renderExploreTable(
+    getDrilledExplorerTransactions()
+  );
+}
+
+
+function renderMobileSortSummary() {
+
+  if (!elements.mobileSortSummary) {
+    return;
+  }
+
+  const fieldLabels = {
+    date: "Date",
+    person: "Person",
+    category: "Category",
+    item: "Item",
+    type: "Type",
+    needWant: "Need / Want",
+    notes: "Notes",
+    amount: "Amount"
+  };
+
+  elements.mobileSortSummary.replaceChildren();
+
+  const prefix =
+    document.createElement("span");
+
+  prefix.className =
+    "mobile-sort-summary-label";
+
+  prefix.textContent =
+    "Sort order:";
+
+  elements.mobileSortSummary
+    .appendChild(prefix);
+
+  exploreSorts.forEach(
+    (sort, index) => {
+
+      const chip =
+        document.createElement("span");
+
+      chip.className =
+        "mobile-sort-summary-chip";
+
+      const arrow =
+        sort.direction === "asc"
+          ? "↑"
+          : "↓";
+
+      chip.textContent =
+        `${index + 1}. ${
+          fieldLabels[sort.field] ||
+          sort.field
+        } ${arrow}`;
+
+      elements.mobileSortSummary
+        .appendChild(chip);
+    }
+  );
 }
 
 
@@ -4819,6 +5224,8 @@ function updateExploreSortIndicators() {
         "sort-active"
       );
     });
+
+  renderMobileSortSummary();
 }
 
 
